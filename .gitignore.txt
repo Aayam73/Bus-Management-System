@@ -1,0 +1,15 @@
+# Qt build files
+build-*/
+*.pro.user
+*.o
+*.obj
+*.exe
+*.dll
+*.so
+*.app
+*.a
+*.log
+Makefile*
+*.moc
+*.qrc.dep
+*.autosave
