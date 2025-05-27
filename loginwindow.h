@@ -19,8 +19,11 @@ public:
 
 private slots:
     void handlelogin();
+    void on_btnSignup_clicked();
 
 private:
     Ui::LoginWindow *ui;
+    bool authenticateUser(const QString &username, const QString &password);
+
 };
 #endif // LOGINWINDOW_H

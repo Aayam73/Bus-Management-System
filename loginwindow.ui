@@ -13,6 +13,9 @@
   <property name="windowTitle">
    <string>LoginWindow</string>
   </property>
+  <property name="autoFillBackground">
+   <bool>false</bool>
+  </property>
   <widget class="QWidget" name="centralwidget">
    <widget class="QLabel" name="label_2">
     <property name="geometry">
@@ -106,6 +109,9 @@
     </property>
     <property name="text">
      <string>Dont have an account ?</string>
+    </property>
+    <property name="readOnly">
+     <bool>true</bool>
     </property>
    </widget>
   </widget>
