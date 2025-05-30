@@ -48,6 +48,9 @@ void SignupWindow::on_btnConfirm_clicked()
     saveUser(username, password);
     QMessageBox::information(this, "Signup Success", "Account created successfully.");
     close();
+    LoginWindow *login = new LoginWindow();
+    login->show();
+    this->hide();
 }
 void SignupWindow::on_btnCancel_clicked()
 {
