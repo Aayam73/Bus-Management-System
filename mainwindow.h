@@ -1,6 +1,7 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
+#include "qsqltablemodel.h"
 #include <QMainWindow>
 #include <QLineEdit>
 #include <QTimeEdit>
@@ -19,6 +20,9 @@ private:
     QTimeEdit *timeEdit;
     QPushButton *searchButton;
     QTableView *tableView;
+    QSqlTableModel *model;
+    void handleSearch();
+
 };
 
 #endif // MAINWINDOW_H

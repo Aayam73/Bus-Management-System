@@ -2,7 +2,7 @@
 #include "ui_loginwindow.h"
 #include <QMessageBox>
 #include "signupwindow.h"
-#include "mainmenuwindow.h"
+#include "mainwindow.h"
 #include <QFile>
 #include <QTextStream>
 
@@ -36,7 +36,7 @@ void LoginWindow::handlelogin()
 
     if (authenticateUser(username, password)) {
         QMessageBox::information(this, "Login", "Login successful!");
-        MainMenuWindow *menu = new MainMenuWindow();
+        MainWindow *menu = new MainWindow();
         menu->show();
         this->hide();
     } else {

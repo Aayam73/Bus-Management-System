@@ -25,6 +25,7 @@ private:
     Ui::SignupWindow *ui;
     bool usernameExists(const QString &username);
     void saveUser(const QString &username, const QString &password);
+
 };
 
 #endif // SIGNUPWINDOW_H

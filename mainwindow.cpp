@@ -4,6 +4,13 @@
 #include <QLabel>
 #include <QHeaderView>
 #include <QTime>
+#include <QSqlTableModel>
+#include <QSqlDatabase>
+#include <QSqlError>
+#include <QSqlQuery>
+#include <QSqlRecord>
+#include <QDebug>
+
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -19,11 +26,11 @@ MainWindow::MainWindow(QWidget *parent)
     // Filter inputs
     QHBoxLayout *filterLayout = new QHBoxLayout();
 
-    QLabel *startLabel = new QLabel("Start Destination:");
+    QLabel *startLabel = new QLabel("Departure Location:");
     startEdit = new QLineEdit();
     startEdit->setPlaceholderText("e.g., Kathmandu");
 
-    QLabel *endLabel = new QLabel("End Destination:");
+    QLabel *endLabel = new QLabel("Arrival Location:");
     endEdit = new QLineEdit();
     endEdit->setPlaceholderText("e.g., Pokhara");
 
@@ -33,6 +40,8 @@ MainWindow::MainWindow(QWidget *parent)
     timeEdit->setTime(QTime(0, 0));
 
     searchButton = new QPushButton("Search");
+
+    connect(searchButton, &QPushButton::clicked, this, &MainWindow::handleSearch);
 
     filterLayout->addWidget(startLabel);
     filterLayout->addWidget(startEdit);
@@ -49,6 +58,10 @@ MainWindow::MainWindow(QWidget *parent)
 
     // Results table
     tableView = new QTableView();
+    model = new QSqlTableModel(this);
+    model->setTable("buses");
+    model->select();  // Load all rows initially
+    tableView->setModel(model);
     tableView->setEditTriggers(QTableView::NoEditTriggers);
     tableView->setSelectionBehavior(QTableView::SelectRows);
     tableView->horizontalHeader()->setStretchLastSection(true);
@@ -56,3 +69,20 @@ MainWindow::MainWindow(QWidget *parent)
 
     mainLayout->addWidget(tableView);
 }
+
+void MainWindow::handleSearch() {
+    QString start = startEdit->text().trimmed();
+    QString end = endEdit->text().trimmed();
+    QString time = timeEdit->time().toString("HH:mm");
+
+    QString filter = QString("route_destination LIKE '%%1%-%2%'")
+     .arg(start, end); // Adjust this depending on your DB format
+
+    QSqlTableModel *model = new QSqlTableModel(this);
+    model->setTable("buses");
+    model->setFilter(filter);
+    model->select();
+
+    tableView->setModel(model);
+}
+
