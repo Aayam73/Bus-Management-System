@@ -11,16 +11,19 @@ CONFIG += c++17
 SOURCES += \
     main.cpp \
     loginwindow.cpp \
+    mainmenuwindow.cpp \
     signupwindow.cpp \
     startwindow.cpp
 
 HEADERS += \
     loginwindow.h \
+    mainmenuwindow.h \
     signupwindow.h \
     startwindow.h
 
 FORMS += \
     loginwindow.ui \
+    mainmenuwindow.ui \
     signupwindow.ui \
     startwindow.ui
 
