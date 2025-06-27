@@ -12,25 +12,28 @@ CONFIG += console
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
+    accountwindow.cpp \
     database.cpp \
+    homewindow.cpp \
     main.cpp \
     loginwindow.cpp \
     signupwindow.cpp \
-    startwindow.cpp \
-    mainwindow.cpp
+    startwindow.cpp
 
 HEADERS += \
+    accountwindow.h \
     database.h \
+    homewindow.h \
     loginwindow.h \
     signupwindow.h \
     startwindow.h \
-    mainwindow.h \
 
 FORMS += \
+    accountwindow.ui \
+    homewindow.ui \
     loginwindow.ui \
     signupwindow.ui \
-    startwindow.ui \
-    mainwindow.ui
+    startwindow.ui
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin
