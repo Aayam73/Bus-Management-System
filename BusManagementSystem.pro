@@ -13,7 +13,7 @@ CONFIG += console
 
 SOURCES += \
     accountwindow.cpp \
-    database.cpp \
+    confirmationwindow.cpp \
     homewindow.cpp \
     main.cpp \
     loginwindow.cpp \
@@ -22,7 +22,7 @@ SOURCES += \
 
 HEADERS += \
     accountwindow.h \
-    database.h \
+    confirmationwindow.h \
     homewindow.h \
     loginwindow.h \
     signupwindow.h \
@@ -30,6 +30,7 @@ HEADERS += \
 
 FORMS += \
     accountwindow.ui \
+    confirmationwindow.ui \
     homewindow.ui \
     loginwindow.ui \
     signupwindow.ui \

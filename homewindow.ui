@@ -100,6 +100,19 @@ SYSTEM</string>
     <string>The info about us goes here</string>
    </property>
   </widget>
+  <widget class="QPushButton" name="btnSearch">
+   <property name="geometry">
+    <rect>
+     <x>290</x>
+     <y>130</y>
+     <width>101</width>
+     <height>32</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>SEARCH</string>
+   </property>
+  </widget>
  </widget>
  <resources/>
  <connections/>

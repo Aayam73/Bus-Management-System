@@ -2,17 +2,16 @@
 #include "ui_loginwindow.h"
 #include <QMessageBox>
 #include "signupwindow.h"
-#include "mainwindow.h"
+#include "homewindow.h"
 #include <QFile>
 #include <QTextStream>
 
 
 LoginWindow::LoginWindow(QWidget *parent)
-    : QMainWindow(parent)
-    , ui(new Ui::LoginWindow)
+    : QMainWindow(parent), ui(new Ui::LoginWindow)
 {
     ui->setupUi(this);
-    connect(ui->btnLogin, &QPushButton::clicked, this, &::LoginWindow::handlelogin);
+    QAbstractButton::connect(ui->btnLogin, &QPushButton::clicked, this, &::LoginWindow::handlelogin);
 }
 
 LoginWindow::~LoginWindow()
@@ -36,7 +35,7 @@ void LoginWindow::handlelogin()
 
     if (authenticateUser(username, password)) {
         QMessageBox::information(this, "Login", "Login successful!");
-        MainWindow *menu = new MainWindow();
+        HomeWindow *menu = new HomeWindow();
         menu->show();
         this->hide();
     } else {
