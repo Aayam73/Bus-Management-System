@@ -7,8 +7,20 @@
     <x>0</x>
     <y>0</y>
     <width>663</width>
-    <height>354</height>
+    <height>366</height>
    </rect>
+  </property>
+  <property name="minimumSize">
+   <size>
+    <width>663</width>
+    <height>366</height>
+   </size>
+  </property>
+  <property name="maximumSize">
+   <size>
+    <width>663</width>
+    <height>366</height>
+   </size>
   </property>
   <property name="windowTitle">
    <string>Form</string>
@@ -16,56 +28,161 @@
   <widget class="QPushButton" name="btnLogin">
    <property name="geometry">
     <rect>
-     <x>170</x>
-     <y>190</y>
-     <width>80</width>
+     <x>159</x>
+     <y>240</y>
+     <width>101</width>
      <height>31</height>
     </rect>
    </property>
+   <property name="styleSheet">
+    <string notr="true">background: transparent;
+    border: none;</string>
+   </property>
    <property name="text">
-    <string>Login</string>
+    <string/>
    </property>
   </widget>
   <widget class="QPushButton" name="btnSignup">
    <property name="geometry">
     <rect>
-     <x>390</x>
-     <y>190</y>
-     <width>80</width>
+     <x>370</x>
+     <y>240</y>
+     <width>91</width>
      <height>31</height>
     </rect>
    </property>
+   <property name="styleSheet">
+    <string notr="true">background: transparent;
+    border: none;</string>
+   </property>
    <property name="text">
-    <string>Signup</string>
+    <string/>
    </property>
   </widget>
-  <widget class="QLabel" name="label">
+  <widget class="QLabel" name="textLabel">
    <property name="geometry">
     <rect>
-     <x>220</x>
-     <y>20</y>
-     <width>241</width>
+     <x>130</x>
+     <y>10</y>
+     <width>361</width>
      <height>41</height>
     </rect>
    </property>
+   <property name="font">
+    <font>
+     <family>Segoe UI</family>
+     <pointsize>-1</pointsize>
+     <bold>true</bold>
+    </font>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">color: rgb(156, 117, 255);               /* Deep navy text */
+    font-size: 24px;                    /* Big, bold font */
+    font-weight: bold;                 
+    font-family: &quot;Segoe UI&quot;, sans-serif;
+    qproperty-alignment: AlignCenter;  /* Center the text */
+    background-color: transparent;     /* Optional: clear background */
+    padding: 10px;
+    border-bottom: 2px solid #3498db;  /* Thin underline for style */
+</string>
+   </property>
    <property name="text">
-    <string>PROJECT - 1 : BUS MANAGEMENT SYSTEM</string>
+    <string> BUS MANAGEMENT SYSTEM</string>
    </property>
   </widget>
   <widget class="QLabel" name="label_2">
    <property name="geometry">
     <rect>
-     <x>300</x>
-     <y>90</y>
-     <width>91</width>
+     <x>240</x>
+     <y>140</y>
+     <width>141</width>
      <height>41</height>
     </rect>
+   </property>
+   <property name="font">
+    <font>
+     <pointsize>16</pointsize>
+     <italic>false</italic>
+     <bold>true</bold>
+     <underline>false</underline>
+     <strikeout>false</strikeout>
+     <kerning>true</kerning>
+    </font>
    </property>
    <property name="text">
     <string>WELCOME</string>
    </property>
   </widget>
+  <widget class="QLabel" name="label_3">
+   <property name="geometry">
+    <rect>
+     <x>-20</x>
+     <y>0</y>
+     <width>671</width>
+     <height>361</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string/>
+   </property>
+   <property name="pixmap">
+    <pixmap resource="resources.qrc">:/images/images/bus.jpg</pixmap>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label_4">
+   <property name="geometry">
+    <rect>
+     <x>150</x>
+     <y>240</y>
+     <width>111</width>
+     <height>41</height>
+    </rect>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">QPushButton:hover {
+    background-color: #16a085;         /* Slightly darker on hover */
+    border: 2px solid #149174;
+}</string>
+   </property>
+   <property name="text">
+    <string/>
+   </property>
+   <property name="pixmap">
+    <pixmap resource="resources.qrc">:/images/images/Button.png</pixmap>
+   </property>
+   <property name="scaledContents">
+    <bool>true</bool>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label_5">
+   <property name="geometry">
+    <rect>
+     <x>350</x>
+     <y>230</y>
+     <width>131</width>
+     <height>61</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string/>
+   </property>
+   <property name="pixmap">
+    <pixmap resource="resources.qrc">:/images/images/Button4.png</pixmap>
+   </property>
+   <property name="scaledContents">
+    <bool>true</bool>
+   </property>
+  </widget>
+  <zorder>label_3</zorder>
+  <zorder>textLabel</zorder>
+  <zorder>label_2</zorder>
+  <zorder>label_4</zorder>
+  <zorder>btnLogin</zorder>
+  <zorder>label_5</zorder>
+  <zorder>btnSignup</zorder>
  </widget>
- <resources/>
+ <resources>
+  <include location="resources.qrc"/>
+ </resources>
  <connections/>
 </ui>

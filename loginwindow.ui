@@ -35,7 +35,7 @@
      <rect>
       <x>230</x>
       <y>60</y>
-      <width>61</width>
+      <width>71</width>
       <height>16</height>
      </rect>
     </property>
@@ -51,6 +51,9 @@
       <width>113</width>
       <height>24</height>
      </rect>
+    </property>
+    <property name="placeholderText">
+     <string>Username</string>
     </property>
    </widget>
    <widget class="QLineEdit" name="txtPass">
@@ -68,15 +71,49 @@
     <property name="echoMode">
      <enum>QLineEdit::EchoMode::Password</enum>
     </property>
+    <property name="placeholderText">
+     <string>8 digit Pass</string>
+    </property>
    </widget>
    <widget class="QPushButton" name="btnLogin">
     <property name="geometry">
      <rect>
       <x>280</x>
       <y>160</y>
-      <width>80</width>
+      <width>101</width>
       <height>31</height>
      </rect>
+    </property>
+    <property name="font">
+     <font>
+      <family>Segoe UI</family>
+      <pointsize>-1</pointsize>
+      <bold>true</bold>
+     </font>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">QPushButton {
+    background: qlineargradient(x1:0, y1:0, x2:1, y2:0,
+                                stop:0 #ff7eb3, stop:1 #ff758c);
+    color: white;
+    border-radius: 10px;
+    padding: 8px 16px;
+    font-weight: bold;
+    font-family: &quot;Segoe UI&quot;, sans-serif;
+    font-size: 14px;
+    border: 2px solid transparent;
+}
+
+QPushButton:hover {
+    background: qlineargradient(x1:0, y1:0, x2:1, y2:0,
+                                stop:0 #ff758c, stop:1 #ff7eb3);
+    border: 2px solid #f06292;
+}
+
+QPushButton:pressed {
+    background-color: #e91e63;
+    border: 2px solid #c2185b;
+}</string>
     </property>
     <property name="text">
      <string>Login</string>
@@ -88,11 +125,43 @@
    <widget class="QPushButton" name="btnSignup">
     <property name="geometry">
      <rect>
-      <x>360</x>
+      <x>370</x>
       <y>200</y>
-      <width>80</width>
+      <width>101</width>
       <height>31</height>
      </rect>
+    </property>
+    <property name="font">
+     <font>
+      <family>Segoe UI</family>
+      <pointsize>-1</pointsize>
+      <bold>true</bold>
+     </font>
+    </property>
+    <property name="styleSheet">
+     <string notr="true">QPushButton {
+    background: qlineargradient(x1:0, y1:0, x2:1, y2:0,
+                                stop:0 #ff7eb3, stop:1 #ff758c);
+    color: white;
+    border-radius: 10px;
+    padding: 8px 16px;
+    font-weight: bold;
+    font-family: &quot;Segoe UI&quot;, sans-serif;
+    font-size: 14px;
+    border: 2px solid transparent;
+}
+
+QPushButton:hover {
+    background: qlineargradient(x1:0, y1:0, x2:1, y2:0,
+                                stop:0 #ff758c, stop:1 #ff7eb3);
+    border: 2px solid #f06292;
+}
+
+QPushButton:pressed {
+    background-color: #e91e63;
+    border: 2px solid #c2185b;
+}
+</string>
     </property>
     <property name="text">
      <string>Signup</string>
@@ -111,22 +180,30 @@
      <string>Dont have an account ?</string>
     </property>
    </widget>
-  </widget>
-  <widget class="QMenuBar" name="menubar">
-   <property name="geometry">
-    <rect>
-     <x>0</x>
-     <y>0</y>
-     <width>650</width>
-     <height>24</height>
-    </rect>
-   </property>
-   <widget class="QMenu" name="menuLogin">
-    <property name="title">
-     <string>Login</string>
+   <widget class="QLabel" name="label_4">
+    <property name="geometry">
+     <rect>
+      <x>0</x>
+      <y>-10</y>
+      <width>651</width>
+      <height>381</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+    <property name="pixmap">
+     <pixmap resource="resources.qrc">:/images/images/1702362010.png</pixmap>
     </property>
    </widget>
-   <addaction name="menuLogin"/>
+   <zorder>label_4</zorder>
+   <zorder>label_2</zorder>
+   <zorder>label</zorder>
+   <zorder>txtUsername</zorder>
+   <zorder>txtPass</zorder>
+   <zorder>btnLogin</zorder>
+   <zorder>btnSignup</zorder>
+   <zorder>label_3</zorder>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
  </widget>
@@ -136,6 +213,8 @@
   <tabstop>btnLogin</tabstop>
   <tabstop>btnSignup</tabstop>
  </tabstops>
- <resources/>
+ <resources>
+  <include location="resources.qrc"/>
+ </resources>
  <connections/>
 </ui>
