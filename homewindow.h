@@ -3,6 +3,8 @@
 
 #include <QWidget>
 
+#include <QSqlQueryModel>
+
 namespace Ui {
 class HomeWindow;
 }
@@ -22,6 +24,7 @@ private slots:
 
 private:
     Ui::HomeWindow *ui;
+    QSqlQueryModel *model;
 };
 
 #endif // HOMEWINDOW_H

@@ -97,7 +97,7 @@ QPushButton:pressed {
      <x>340</x>
      <y>230</y>
      <width>121</width>
-     <height>41</height>
+     <height>31</height>
     </rect>
    </property>
    <property name="styleSheet">
@@ -259,6 +259,14 @@ QPushButton:pressed {
   <zorder>label_2</zorder>
   <zorder>label</zorder>
  </widget>
+ <tabstops>
+  <tabstop>txtUsername</tabstop>
+  <tabstop>txtPass</tabstop>
+  <tabstop>txtCPass</tabstop>
+  <tabstop>btnCancel</tabstop>
+  <tabstop>btnConfirm</tabstop>
+  <tabstop>btnLogin</tabstop>
+ </tabstops>
  <resources>
   <include location="resources.qrc"/>
  </resources>

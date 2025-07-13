@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>700</width>
-    <height>430</height>
+    <width>735</width>
+    <height>666</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -74,47 +74,27 @@
   <widget class="QLabel" name="labelDeparture">
    <property name="geometry">
     <rect>
-     <x>100</x>
+     <x>139</x>
      <y>80</y>
-     <width>80</width>
-     <height>24</height>
+     <width>41</width>
+     <height>21</height>
     </rect>
    </property>
    <property name="text">
-    <string>Departure:</string>
-   </property>
-  </widget>
-  <widget class="QLineEdit" name="searchD">
-   <property name="geometry">
-    <rect>
-     <x>190</x>
-     <y>80</y>
-     <width>150</width>
-     <height>28</height>
-    </rect>
+    <string>FROM</string>
    </property>
   </widget>
   <widget class="QLabel" name="labelArrival">
    <property name="geometry">
     <rect>
-     <x>370</x>
+     <x>430</x>
      <y>80</y>
-     <width>80</width>
-     <height>24</height>
+     <width>20</width>
+     <height>21</height>
     </rect>
    </property>
    <property name="text">
-    <string>Arrival:</string>
-   </property>
-  </widget>
-  <widget class="QLineEdit" name="searchA">
-   <property name="geometry">
-    <rect>
-     <x>460</x>
-     <y>80</y>
-     <width>150</width>
-     <height>28</height>
-    </rect>
+    <string>TO</string>
    </property>
   </widget>
   <widget class="QPushButton" name="btnSearch">
@@ -149,9 +129,9 @@
    <property name="geometry">
     <rect>
      <x>50</x>
-     <y>200</y>
+     <y>580</y>
      <width>600</width>
-     <height>180</height>
+     <height>81</height>
     </rect>
    </property>
    <property name="styleSheet">
@@ -162,6 +142,46 @@
    </property>
    <property name="wordWrap">
     <bool>true</bool>
+   </property>
+  </widget>
+  <widget class="QTableView" name="tableView">
+   <property name="geometry">
+    <rect>
+     <x>5</x>
+     <y>191</y>
+     <width>721</width>
+     <height>391</height>
+    </rect>
+   </property>
+  </widget>
+  <widget class="QLineEdit" name="lineEdit">
+   <property name="geometry">
+    <rect>
+     <x>200</x>
+     <y>80</y>
+     <width>131</width>
+     <height>21</height>
+    </rect>
+   </property>
+  </widget>
+  <widget class="QLineEdit" name="srchFrom">
+   <property name="geometry">
+    <rect>
+     <x>210</x>
+     <y>80</y>
+     <width>131</width>
+     <height>21</height>
+    </rect>
+   </property>
+  </widget>
+  <widget class="QLineEdit" name="srchTo">
+   <property name="geometry">
+    <rect>
+     <x>470</x>
+     <y>80</y>
+     <width>131</width>
+     <height>21</height>
+    </rect>
    </property>
   </widget>
  </widget>

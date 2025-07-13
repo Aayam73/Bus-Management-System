@@ -75,15 +75,3 @@ FROM routes r
 JOIN districts d1 ON r.from_district = d1.districts_id
 JOIN districts d2 ON r.to_district = d2.districts_id;
 SELECT * FROM route_display LIMIT 1;
-
-	
-
-
-
-
-
-
-
-
-
-
