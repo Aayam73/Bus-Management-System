@@ -9,6 +9,9 @@
 #include <QStringList>
 #include <QDebug>
 #include <QCompleter>
+#include "BookingButtonDelegate.h"
+#include "bookingwindow.h"
+
 
 
 HomeWindow::HomeWindow(QWidget *parent)
@@ -25,7 +28,6 @@ HomeWindow::HomeWindow(QWidget *parent)
         districts << query.value(0).toString();
     }
 
-    // Create completers for the 'From' and 'To' QLineEdit inputs
     QCompleter *completerFrom = new QCompleter(districts, this);
     completerFrom->setCaseSensitivity(Qt::CaseInsensitive);
     completerFrom->setFilterMode(Qt::MatchContains);
@@ -70,6 +72,26 @@ void HomeWindow::on_btnSearch_clicked()
 
     model->setQuery(std::move(query));
 
+
+    // Add a column header name
+    model->setHeaderData(4, Qt::Horizontal, "Book");
+
+    // NOTE: QSqlQueryModel is read-only — use a delegate to simulate the button
+    BookingButtonDelegate *delegate = new BookingButtonDelegate(this);
+    ui->tableView->setItemDelegateForColumn(4, delegate);
+
+    // Connect button click
+    connect(delegate, &BookingButtonDelegate::bookButtonClicked, this, [=](const QModelIndex &index) {
+        QString routeId = index.sibling(index.row(), 0).data().toString();
+        QString from = index.sibling(index.row(), 1).data().toString();
+        QString to = index.sibling(index.row(), 2).data().toString();
+        QString departure = index.sibling(index.row(), 3).data().toString();
+
+        BookingWindow *booking = new BookingWindow;
+        booking->setRouteData(routeId, from, to, departure); // Define this method in BookingWindow
+        booking->show();
+        this->hide();
+    });
 }
 
 void HomeWindow::on_btnAccount_clicked()

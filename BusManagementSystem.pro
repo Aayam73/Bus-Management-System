@@ -13,6 +13,8 @@ CONFIG += console
 
 SOURCES += \
     accountwindow.cpp \
+    bookingbuttondelegate.cpp \
+    bookingwindow.cpp \
     confirmationwindow.cpp \
     homewindow.cpp \
     main.cpp \
@@ -22,6 +24,8 @@ SOURCES += \
 
 HEADERS += \
     accountwindow.h \
+    bookingbuttondelegate.h \
+    bookingwindow.h \
     confirmationwindow.h \
     homewindow.h \
     loginwindow.h \
@@ -30,6 +34,7 @@ HEADERS += \
 
 FORMS += \
     accountwindow.ui \
+    bookingwindow.ui \
     confirmationwindow.ui \
     homewindow.ui \
     loginwindow.ui \
