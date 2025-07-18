@@ -5,6 +5,9 @@
 #include "homewindow.h"
 #include <QFile>
 #include <QTextStream>
+#include <QSqlQuery>
+#include <QSqlError>
+#include <QDebug>
 
 
 LoginWindow::LoginWindow(QWidget *parent)
@@ -53,25 +56,20 @@ void LoginWindow::on_btnSignup_clicked()
 }
 bool LoginWindow::authenticateUser(const QString &username, const QString &password)
 {
-    QFile file("users.txt");
-    if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
-        return false;  // File doesn't exist or can't open
+    QSqlQuery query;
+    query.prepare("SELECT password FROM users WHERE username = :username");
+    query.bindValue(":username", username);
+
+    if (!query.exec()) {
+        qDebug() << "Login query failed:" << query.lastError().text();
+        return false;
     }
 
-    QTextStream in(&file);
-    while (!in.atEnd()) {
-        QString line = in.readLine().trimmed();
-        QStringList parts = line.split(",");
-
-        if (parts.size() >= 2) {
-            QString storedUsername = parts[0];
-            QString storedPassword = parts[1];
-
-            if (storedUsername == username && storedPassword == password) {
-                return true;
-            }
-        }
+    if (query.next()) {
+        QString storedPassword = query.value(0).toString();
+        return storedPassword == password;
     }
+
 
     return false;
 }

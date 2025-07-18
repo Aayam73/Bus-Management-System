@@ -4,6 +4,13 @@
 #include <QFile>
 #include <QTextStream>
 #include <QMessageBox>
+#include <QSqlDatabase>
+#include <QSqlQuery>
+#include <QSqlError>
+#include <QVariant>
+#include <QDebug>
+
+
 
 SignupWindow::SignupWindow(QWidget *parent)
     : QWidget(parent)
@@ -18,6 +25,20 @@ SignupWindow::SignupWindow(QWidget *parent)
 SignupWindow::~SignupWindow()
 {
     delete ui;
+}
+
+bool SignupWindow::saveUser(const QString &username, const QString &password)
+{
+    QSqlQuery query;
+    query.prepare("INSERT INTO users (username, password) VALUES (:username, :password)");
+    query.bindValue(":username", username);
+    query.bindValue(":password", password);
+
+    if (!query.exec()) {
+        qDebug() << "Signup failed:" << query.lastError().text();
+        return false;
+    }
+    return true;
 }
 
 void SignupWindow::on_btnConfirm_clicked()
@@ -60,29 +81,16 @@ void SignupWindow::on_btnCancel_clicked()
 
 bool SignupWindow::usernameExists(const QString &username)
 {
-    QFile file("users.txt");
-    if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
-        return false;
+    QSqlQuery query;
+    query.prepare("SELECT COUNT(*) FROM users WHERE username = :username");
+    query.bindValue(":username", username);
 
-    QTextStream in(&file);
-    while (!in.atEnd()) {
-        QString line = in.readLine();
-        QStringList parts = line.split(',');
-        if (parts.size() >= 1 && parts[0] == username)
-            return true;
+    if (query.exec() && query.next()) {
+        int count = query.value(0).toInt();
+        return count > 0;
     }
 
     return false;
-}
-
-void SignupWindow::saveUser(const QString &username, const QString &password)
-{
-    QFile file("users.txt");
-    if (file.open(QIODevice::Append | QIODevice::Text)) {
-        QTextStream out(&file);
-        out << username << "," << password << "\n";
-        file.close();
-    }
 }
 
 void SignupWindow::on_btnLogin_clicked()
