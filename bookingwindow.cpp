@@ -15,11 +15,20 @@ BookingWindow::~BookingWindow()
 }
 
 void BookingWindow::setRouteData(const QString &routeId, const QString &from,
-                                 const QString &to, const QString &departure) {
+                                 const QString &to, const QString &departure,
+                                 const QString &arrival, const QString &price,
+                                 const QString &bus, const QString &driver,
+                                 const QString &phone, const QString &seats) {
     ui->labelRouteId->setText(routeId);
     ui->labelFrom->setText(from);
     ui->labelTo->setText(to);
     ui->labelDeparture->setText(departure);
+    ui->labelArrival->setText(arrival);
+    ui->labelPrice->setText(price);
+    ui->labelBus->setText(bus);
+    ui->labelDriver->setText(driver);
+    ui->labelPhone->setText(phone);
+    ui->labelSeats->setText(seats);
 
 
 }

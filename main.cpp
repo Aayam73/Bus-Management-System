@@ -10,7 +10,7 @@
 
 void connectToDatabase() {
     QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE");
-    QString dbPath = "database/bus_database2.db";
+    QString dbPath = "database/bus_database.db";
     qDebug() << "Trying to open database at:" << dbPath;
     db.setDatabaseName(dbPath);
     if (!db.open()) {

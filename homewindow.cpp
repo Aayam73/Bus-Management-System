@@ -52,12 +52,11 @@ void HomeWindow::on_btnSearch_clicked()
 
 
     QString queryStr = R"(
-        SELECT r.route_id, d1.district_name AS from_district, d2.district_name AS to_district,
-               r.departure_time, r.arrival_time
-        FROM routes r
-        JOIN districts d1 ON r.from_district = d1.districts_id
-        JOIN districts d2 ON r.to_district = d2.districts_id
-        WHERE d1.district_name = :fromDistrict AND d2.district_name = :toDistrict
+        SELECT route_id, from_district, to_district, departure_time, arrival_time,
+               price, bus_no, driver_info, drivers_cellno, seats,
+               'Book' AS book
+        FROM route_display
+        WHERE from_district = :fromDistrict AND to_district = :toDistrict
     )";
 
     QSqlQuery query;
@@ -78,7 +77,7 @@ void HomeWindow::on_btnSearch_clicked()
 
     // NOTE: QSqlQueryModel is read-only — use a delegate to simulate the button
     BookingButtonDelegate *delegate = new BookingButtonDelegate(this);
-    ui->tableView->setItemDelegateForColumn(4, delegate);
+    ui->tableView->setItemDelegateForColumn(10, delegate);
 
     // Connect button click
     connect(delegate, &BookingButtonDelegate::bookButtonClicked, this, [=](const QModelIndex &index) {
@@ -86,9 +85,15 @@ void HomeWindow::on_btnSearch_clicked()
         QString from = index.sibling(index.row(), 1).data().toString();
         QString to = index.sibling(index.row(), 2).data().toString();
         QString departure = index.sibling(index.row(), 3).data().toString();
+        QString arrival = index.sibling(index.row(), 4).data().toString();
+        QString price = index.sibling(index.row(), 5).data().toString();
+        QString bus = index.sibling(index.row(), 6).data().toString();
+        QString driver = index.sibling(index.row(), 7).data().toString();
+        QString phone = index.sibling(index.row(), 8).data().toString();
+        QString seats = index.sibling(index.row(), 9).data().toString();
 
         BookingWindow *booking = new BookingWindow;
-        booking->setRouteData(routeId, from, to, departure); // Define this method in BookingWindow
+        booking->setRouteData(routeId, from, to, departure, arrival, price, bus, driver, phone, seats); // Define this method in BookingWindow
         booking->show();
         this->hide();
     });
