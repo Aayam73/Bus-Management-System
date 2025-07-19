@@ -1,7 +1,7 @@
 #include "confirmationwindow.h"
 #include "ui_confirmationwindow.h"
-#include "startwindow.h"
 #include "accountwindow.h"
+#include <QQuickView>
 
 ConfirmationWindow::ConfirmationWindow(QWidget *parent)
     : QDialog(parent)
@@ -17,9 +17,12 @@ ConfirmationWindow::~ConfirmationWindow()
 
 void ConfirmationWindow::on_buttonBox_accepted()
 {
-    StartWindow *start = new StartWindow;
+    QQuickView *view = new QQuickView();
+    view->setResizeMode(QQuickView::SizeRootObjectToView);
+    view->setSource(QUrl::fromLocalFile("StartPage.qml"));
+    view->show();
+
     this->close();
-    start->show();
 }
 
 

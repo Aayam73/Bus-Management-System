@@ -1,6 +1,5 @@
 #include "signupwindow.h"
 #include "loginwindow.h"
-#include "ui_signupwindow.h"
 #include <QFile>
 #include <QTextStream>
 #include <QMessageBox>
@@ -9,23 +8,31 @@
 #include <QSqlError>
 #include <QVariant>
 #include <QDebug>
+#include <QQmlApplicationEngine>
+#include <QQmlContext>
+#include <QQuickView>
+#include <QQuickItem>
 
-
-
-SignupWindow::SignupWindow(QWidget *parent)
-    : QWidget(parent)
-    , ui(new Ui::SignupWindow)
+// Constructor
+SignupWindow::SignupWindow(QObject *parent)
+    : QObject(parent)  // Changed from QWidget to QObject
 {
-    ui->setupUi(this);
-    ui->txtPass->setEchoMode(QLineEdit::Password);
-    ui->txtCPass->setEchoMode(QLineEdit::Password);
-
+    // Load QML SignupPage
+    m_view = new QQuickView();
+    m_view->setResizeMode(QQuickView::SizeRootObjectToView);
+    m_view->rootContext()->setContextProperty("signupWindow", this);  // Expose this class to QML
+    m_view->setSource(QUrl("qrc:/Qml/SignupPage.qml"));   // Or local file path
 }
 
+// Destructor
 SignupWindow::~SignupWindow()
 {
-    delete ui;
+    if (m_view) {
+        m_view->close();
+        delete m_view;
+    }
 }
+
 
 bool SignupWindow::saveUser(const QString &username, const QString &password)
 {
@@ -39,44 +46,6 @@ bool SignupWindow::saveUser(const QString &username, const QString &password)
         return false;
     }
     return true;
-}
-
-void SignupWindow::on_btnConfirm_clicked()
-{
-    QString username = ui->txtUsername->text().trimmed();
-    QString password = ui->txtPass->text();
-    QString confirm = ui->txtCPass->text();
-
-    if (username.isEmpty() || password.isEmpty() || confirm.isEmpty()) {
-        QMessageBox::warning(this, "Signup Failed", "All fields are required.");
-        return;
-    }
-
-    if (password != confirm) {
-        QMessageBox::warning(this, "Signup Failed", "Passwords do not match.");
-        return;
-    }
-
-    if (usernameExists(username)) {
-        QMessageBox::warning(this, "Signup Failed", "Username already exists.");
-        return;
-    }
-    if (password.length() < 8) {
-        QMessageBox::information(this, "Invalid Password", "It must have minimum of 8 characters");
-        return;
-    }
-
-    saveUser(username, password);
-    QMessageBox::information(this, "Signup Success", "Account created successfully.");
-    close();
-
-    LoginWindow *login = new LoginWindow();
-    login->show();
-    this->hide();
-}
-void SignupWindow::on_btnCancel_clicked()
-{
-    close();
 }
 
 bool SignupWindow::usernameExists(const QString &username)
@@ -93,13 +62,57 @@ bool SignupWindow::usernameExists(const QString &username)
     return false;
 }
 
-void SignupWindow::on_btnLogin_clicked()
+void SignupWindow::handleSignup(const QString &username, const QString &password, const QString &confirm)
+{
+    if (username.isEmpty() || password.isEmpty() || confirm.isEmpty()) {
+        qDebug() << "Signup Failed: All fields are required.";
+        return;
+    }
+
+    if (password != confirm) {
+        qDebug() << "Signup Failed: Passwords do not match.";
+        return;
+    }
+
+    if (usernameExists(username)) {
+        qDebug() << "Signup Failed: Username already exists.";
+        return;
+    }
+
+    if (password.length() < 8) {
+        qDebug() << "Signup Failed: Password must be at least 8 characters.";
+        return;
+    }
+
+    if (saveUser(username, password)) {
+        qDebug() << "Signup Success: Account created successfully.";
+
+        emit signupSuccess();  // <-- ✅ This notifies QML
+
+        if (m_view) {
+            m_view->close();    // Optional: only if you're not using StackView
+        }
+    }
+
+}
+
+
+void SignupWindow::goToLogin()
 {
     LoginWindow *login = new LoginWindow();
     login->show();
-    this->hide();
+
+    // Close this view
+    if (m_view) {
+        m_view->close();
+    }
 }
 
+
+void SignupWindow::show() {
+    if (m_view)
+        m_view->show();
+}
 
 
 

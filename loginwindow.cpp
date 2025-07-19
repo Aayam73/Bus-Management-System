@@ -1,59 +1,57 @@
 #include "loginwindow.h"
-#include "ui_loginwindow.h"
-#include <QMessageBox>
-#include "signupwindow.h"
 #include "homewindow.h"
-#include <QFile>
-#include <QTextStream>
+#include "signupwindow.h"
 #include <QSqlQuery>
 #include <QSqlError>
 #include <QDebug>
+#include <QQmlContext>
 
 
-LoginWindow::LoginWindow(QWidget *parent)
-    : QMainWindow(parent), ui(new Ui::LoginWindow)
+LoginWindow::LoginWindow(QObject *parent)
+    : QObject(parent)
 {
-    ui->setupUi(this);
-    QAbstractButton::connect(ui->btnLogin, &QPushButton::clicked, this, &::LoginWindow::handlelogin);
+    m_view = new QQuickView();
+    m_view->setResizeMode(QQuickView::SizeRootObjectToView);
+    m_view->rootContext()->setContextProperty("loginWindow", this);
+    m_view->setSource(QUrl("qrc:/Qml/LoginPage.qml"));
 }
 
 LoginWindow::~LoginWindow()
 {
-    delete ui;
+    if (m_view) {
+        m_view->close();
+        delete m_view;
+    }
 }
-void LoginWindow::handlelogin()
-{
-    QString username = ui->txtUsername->text().trimmed();
-    QString password = ui->txtPass->text();
 
+void LoginWindow::handleLogin(const QString &username, const QString &password)
+{
     if (password.length() < 8) {
-        QMessageBox::information(this, "Invalid Password", "It must have minimum of 8 characters");
+        emit loginFailed("Password must have at least 8 characters.");
         return;
     }
 
     if (username.isEmpty() || password.isEmpty()) {
-        QMessageBox::warning(this, "Login Failed", "Please enter both username and password.");
+        emit loginFailed("Please enter both username and password.");
         return;
     }
 
     if (authenticateUser(username, password)) {
-        QMessageBox::information(this, "Login", "Login successful!");
-        HomeWindow *menu = new HomeWindow();
-        menu->show();
-        this->hide();
+        emit loginSuccess();
+
+        // Open home window (old UI widget) if you want or handle in QML navigation
+        HomeWindow *home = new HomeWindow();
+        home->show();
+
+        if (m_view) {
+            m_view->close();
+        }
+
     } else {
-        QMessageBox::warning(this, "Login Failed", "Incorrect username or password.");
+        emit loginFailed("Incorrect username or password.");
     }
 }
 
-
-void LoginWindow::on_btnSignup_clicked()
-{
-    SignupWindow *signup = new SignupWindow();
-    signup->show();
-    this->hide();
-
-}
 bool LoginWindow::authenticateUser(const QString &username, const QString &password)
 {
     QSqlQuery query;
@@ -72,5 +70,23 @@ bool LoginWindow::authenticateUser(const QString &username, const QString &passw
 
 
     return false;
+}
+
+void LoginWindow::goToSignup()
+{
+    if (m_view) {
+        m_view->close();
+        delete m_view;
+        m_view = nullptr;
+    }
+
+    // Open Signup window (which manages its own QQuickView)
+    SignupWindow *signup = new SignupWindow();
+    Q_UNUSED(signup);
+}
+
+void LoginWindow::show() {
+    if (m_view)
+        m_view->show();
 }
 

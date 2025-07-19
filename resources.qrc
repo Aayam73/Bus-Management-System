@@ -1,9 +1,10 @@
 <RCC>
     <qresource prefix="/images">
-        <file>images/bus.jpg</file>
-        <file>images/Button.png</file>
-        <file>images/Button4.png</file>
-        <file>images/background.jpg</file>
-        <file>images/1702362010.png</file>
+        <file>images/logo.png</file>
+    </qresource>
+    <qresource prefix="/Qml">
+        <file>LoginPage.qml</file>
+        <file>SignupPage.qml</file>
+        <file>StartPage.qml</file>
     </qresource>
 </RCC>

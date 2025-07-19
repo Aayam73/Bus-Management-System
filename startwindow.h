@@ -1,27 +1,25 @@
 #ifndef STARTWINDOW_H
 #define STARTWINDOW_H
 
-#include <QWidget>
+#include "loginwindow.h"
+#include "signupwindow.h"
+#include <QObject>
+#include <QQuickView>
 
-namespace Ui {
-class StartWindow;
-}
-
-class StartWindow : public QWidget
+class StartWindow : public QObject
 {
     Q_OBJECT
 
 public:
-    explicit StartWindow(QWidget *parent = nullptr);
+    explicit StartWindow(QObject *parent = nullptr);
     ~StartWindow();
 
-private slots:
-    void on_btnLogin_clicked();
-    void on_btnSignup_clicked();
-
+    Q_INVOKABLE void openLoginWindow();
+    Q_INVOKABLE void openSignupWindow();
 
 private:
-    Ui::StartWindow *ui;
+    QQuickView *m_view;
+    LoginWindow *loginWindow = nullptr;
+    SignupWindow *signupWindow = nullptr;
 };
-
 #endif // STARTWINDOW_H

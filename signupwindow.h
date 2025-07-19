@@ -1,31 +1,31 @@
 #ifndef SIGNUPWINDOW_H
 #define SIGNUPWINDOW_H
 
-#include <QWidget>
+#include <QObject>
+#include <QQuickView>
 
-namespace Ui {
-class SignupWindow;
-}
-
-class SignupWindow : public QWidget
+class SignupWindow : public QObject
 {
     Q_OBJECT
 
 public:
-    explicit SignupWindow(QWidget *parent = nullptr);
+    explicit SignupWindow(QObject *parent = nullptr);
     ~SignupWindow();
 
-private slots:
-    void on_btnConfirm_clicked();
-    void on_btnCancel_clicked();
-    void on_btnLogin_clicked();
+    Q_INVOKABLE void handleSignup(const QString &username, const QString &password, const QString &confirm);
+    Q_INVOKABLE void goToLogin();
+    void show();
+
+
+signals:
+    void signupSuccess();
 
 
 private:
-    Ui::SignupWindow *ui;
     bool usernameExists(const QString &username);
     bool saveUser(const QString &username, const QString &password);
 
+    QQuickView *m_view;
 };
 
 #endif // SIGNUPWINDOW_H

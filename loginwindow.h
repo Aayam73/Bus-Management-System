@@ -1,29 +1,30 @@
 #ifndef LOGINWINDOW_H
 #define LOGINWINDOW_H
 
-#include <QMainWindow>
+#include <QObject>
+#include <QQuickView>
 
-QT_BEGIN_NAMESPACE
-namespace Ui {
-class LoginWindow;
-}
-QT_END_NAMESPACE
 
-class LoginWindow : public QMainWindow
+class LoginWindow : public QObject
 {
     Q_OBJECT
 
 public:
-    LoginWindow(QWidget *parent = nullptr);
+    LoginWindow(QObject *parent = nullptr);
     ~LoginWindow();
 
-private slots:
-    void handlelogin();
-    void on_btnSignup_clicked();
+    Q_INVOKABLE void handleLogin(const QString &username, const QString &password);
+    Q_INVOKABLE void goToSignup();
+    void show();
+
+signals:
+    void loginSuccess();
+    void loginFailed(const QString &reason);
 
 private:
-    Ui::LoginWindow *ui;
     bool authenticateUser(const QString &username, const QString &password);
+
+    QQuickView *m_view;
 
 };
 #endif // LOGINWINDOW_H

@@ -1,30 +1,30 @@
 #include "startwindow.h"
-#include "ui_startwindow.h"
 #include "loginwindow.h"
 #include "signupwindow.h"
+#include <QDebug>
+
+StartWindow::StartWindow(QObject *parent) : QObject(parent){}
+
+    StartWindow::~StartWindow() {}
 
 
-StartWindow::StartWindow(QWidget *parent)
-    : QWidget(parent)
-    , ui(new Ui::StartWindow)
-{
-    ui->setupUi(this);
-}
+    void StartWindow::openLoginWindow()
+    {
+        if (!loginWindow)
+            loginWindow = new LoginWindow();
 
-StartWindow::~StartWindow()
-{
-    delete ui;
-}
+        loginWindow->show();
 
-void StartWindow::on_btnLogin_clicked(){
-    LoginWindow *login = new LoginWindow();
-    login->show();
-    this->hide();
 
-}
+    }
 
-void StartWindow::on_btnSignup_clicked(){
-    SignupWindow *signup = new SignupWindow();
-    signup->show();
-    this->hide();
-}
+    void StartWindow::openSignupWindow()
+    {
+        if (!signupWindow)
+            signupWindow = new SignupWindow();
+
+        signupWindow->show();
+
+
+    }
+

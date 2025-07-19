@@ -1,12 +1,20 @@
 
 #include "startwindow.h"
-#include <QApplication>
+#include "signupwindow.h"
+#include "loginwindow.h"
 #include <QMessageBox>
 #include <QSqlDatabase>
 #include <QSqlError>
 #include <QDebug>
 #include <QCoreApplication>
 #include <QDir>
+#include <QGuiApplication>
+#include <QQmlApplicationEngine>
+#include <QQmlContext>
+#include <QtCore/qurl.h>
+#include <QQuickStyle>
+#include <QApplication>
+
 
 void connectToDatabase() {
     QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE");
@@ -23,10 +31,26 @@ void connectToDatabase() {
 
 int main(int argc, char *argv[])
 {
-    QApplication a(argc, argv);
+    QApplication app(argc, argv);
     connectToDatabase();
-    StartWindow w;
-    w.show();
-    return a.exec();
+
+    QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
+    QQuickStyle::setStyle("Fusion");  // or "Basic", "Material"
+
+    QQmlApplicationEngine engine;
+
+    StartWindow startWindow;
+    SignupWindow signup;
+    LoginWindow login;
+    engine.rootContext()->setContextProperty("startWindow", &startWindow);
+    engine.rootContext()->setContextProperty("signupWindow", &signup);
+    engine.rootContext()->setContextProperty("loginWindow", &login);
+
+    engine.load(QUrl("qrc:/Qml/StartPage.qml"));
+
+    if (engine.rootObjects().isEmpty())
+        return -1;
+
+    return app.exec();
 }
 
