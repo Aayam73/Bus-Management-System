@@ -1,0 +1,9 @@
+<RCC>
+  <qresource prefix="/qt/qml/untitled/">
+    <file alias="Main.qml">C:/Users/HP-15/Documents/untitled/Main.qml</file>
+    <file alias="LoginPage.qml">C:/Users/HP-15/Documents/untitled/LoginPage.qml</file>
+    <file alias="SignupPage.qml">C:/Users/HP-15/Documents/untitled/SignupPage.qml</file>
+    <file alias="resources.qrc">C:/Users/HP-15/Documents/untitled/resources.qrc</file>
+  </qresource>
+</RCC>
+

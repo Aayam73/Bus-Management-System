@@ -1,0 +1,10 @@
+-I
+C:/Users/HP-15/Documents/untitled/build/Desktop_Qt_6_9_1_MinGW_64_bit-Debug
+-I
+C:/Qt/6.9.1/mingw_64/qml
+--resource
+C:/Users/HP-15/Documents/untitled/build/Desktop_Qt_6_9_1_MinGW_64_bit-Debug/.qt/rcc/qmake_untitled.qrc
+--resource
+C:/Users/HP-15/Documents/untitled/build/Desktop_Qt_6_9_1_MinGW_64_bit-Debug/.qt/rcc/appuntitled_raw_qml_0.qrc
+--module
+untitled

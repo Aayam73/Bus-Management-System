@@ -1,0 +1,18 @@
+{
+    "classes": [
+        {
+            "className": "Form",
+            "lineNumber": 10,
+            "object": true,
+            "qualifiedClassName": "Form",
+            "superClasses": [
+                {
+                    "access": "public",
+                    "name": "QWidget"
+                }
+            ]
+        }
+    ],
+    "inputFile": "form.h",
+    "outputRevision": 69
+}

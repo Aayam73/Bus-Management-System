@@ -1,0 +1,7 @@
+module untitled
+typeinfo appuntitled.qmltypes
+prefer :/qt/qml/untitled/
+Main 1.0 Main.qml
+LoginPage 1.0 LoginPage.qml
+SignupPage 1.0 SignupPage.qml
+
