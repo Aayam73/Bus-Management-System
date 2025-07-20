@@ -36,7 +36,14 @@ SignupWindow::~SignupWindow()
 
 bool SignupWindow::saveUser(const QString &username, const QString &password)
 {
-    QSqlQuery query;
+    QSqlDatabase db = QSqlDatabase::database("main");
+    if (!db.isOpen()) {
+        qDebug() << "Database is not open!";
+        return false;
+    }
+
+
+    QSqlQuery query(db);
     query.prepare("INSERT INTO users (username, password) VALUES (:username, :password)");
     query.bindValue(":username", username);
     query.bindValue(":password", password);
@@ -50,7 +57,13 @@ bool SignupWindow::saveUser(const QString &username, const QString &password)
 
 bool SignupWindow::usernameExists(const QString &username)
 {
-    QSqlQuery query;
+    QSqlDatabase db = QSqlDatabase::database("main");
+    if (!db.isOpen()) {
+        qDebug() << "Database is not open!";
+        return false;
+    }
+
+    QSqlQuery query(db);
     query.prepare("SELECT COUNT(*) FROM users WHERE username = :username");
     query.bindValue(":username", username);
 

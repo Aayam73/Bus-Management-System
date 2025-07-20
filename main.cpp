@@ -21,29 +21,36 @@
 
 void connectToDatabase() {
     QString dataDir = QStandardPaths::writableLocation(QStandardPaths::AppDataLocation);
-    QDir().mkpath(dataDir);  // Make sure the directory exists
-
+    QDir().mkpath(dataDir);
     QString dbPath = dataDir + "/bus_database.db";
     qDebug() << "Trying to open database at:" << dbPath;
 
-    // Copy the default DB from resources if it doesn't exist
+    // Copy if DB doesn't exist
     if (!QFile::exists(dbPath)) {
-        qDebug() << "Database file not found. Copying from resources...";
-        if (!QFile::copy(":/assets/database/bus_database.db", dbPath)) {
-            qDebug() << "Failed to copy default database.";
-            QMessageBox::critical(nullptr, "Database Error", "Failed to copy default database from resources.");
+        qDebug() << "Database not found. Copying from resources...";
+        if (QFile::copy(":/assets/database/bus_database.db", dbPath)) {
+            QFile dbFile(dbPath);
+            if (!dbFile.setPermissions(QFileDevice::ReadOwner | QFileDevice::WriteOwner)) {
+                qWarning() << "Failed to set write permissions on database.";
+            }
+        } else {
+            qWarning() << "Failed to copy database.";
+            QMessageBox::critical(nullptr, "Database Error", "Unable to copy default database.");
             return;
         }
     }
 
-    // Open database
-    QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE");
-    db.setDatabaseName(dbPath);
-    if (!db.open()) {
-        qDebug() << "Failed to open database:" << db.lastError().text();
-        QMessageBox::critical(nullptr, "Database Error", "Failed to open database:\n" + db.lastError().text());
-    } else {
-        qDebug() << "Database connected successfully!";
+    // Open with a named connection
+    if (!QSqlDatabase::contains("main")) {
+        QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE", "main");
+        db.setDatabaseName(dbPath);
+        db.open();
+        if (!db.open()) {
+            qWarning() << "Database open error:" << db.lastError().text();
+            QMessageBox::critical(nullptr, "Database Error", db.lastError().text());
+        } else {
+            qDebug() << "Database opened successfully!";
+        }
     }
 }
 

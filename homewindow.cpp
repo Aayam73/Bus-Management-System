@@ -23,7 +23,19 @@ HomeWindow::HomeWindow(QWidget *parent)
     ui->tableView->setModel(model);
 
     QStringList districts;
-    QSqlQuery query("SELECT district_name FROM districts");
+    QSqlDatabase db = QSqlDatabase::database("main");
+    if (!db.isOpen()) {
+        qDebug() << "Database not open!";
+        return;
+    }
+
+    QSqlQuery query(db);
+    query.prepare("SELECT district_name FROM districts");
+    if (!query.exec()) {
+        qDebug() << "Failed to load districts:" << query.lastError().text();
+        return;
+    }
+
     while (query.next()) {
         districts << query.value(0).toString();
     }
@@ -59,7 +71,13 @@ void HomeWindow::on_btnSearch_clicked()
         WHERE from_district = :fromDistrict AND to_district = :toDistrict
     )";
 
-    QSqlQuery query;
+    QSqlDatabase db = QSqlDatabase::database("main");
+    if (!db.isOpen()) {
+        qDebug() << "Database is not open!";
+        return;
+    }
+
+    QSqlQuery query(db);
     query.prepare(queryStr);
     query.bindValue(":fromDistrict", fromDistrict);
     query.bindValue(":toDistrict", toDistrict);

@@ -54,7 +54,13 @@ void LoginWindow::handleLogin(const QString &username, const QString &password)
 
 bool LoginWindow::authenticateUser(const QString &username, const QString &password)
 {
-    QSqlQuery query;
+    QSqlDatabase db = QSqlDatabase::database("main");
+    if (!db.isOpen()) {
+        qDebug() << "Database is not open!";
+        return false;
+    }
+
+    QSqlQuery query(db);
     query.prepare("SELECT password FROM users WHERE username = :username");
     query.bindValue(":username", username);
 
