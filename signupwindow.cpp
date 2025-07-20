@@ -65,32 +65,30 @@ bool SignupWindow::usernameExists(const QString &username)
 void SignupWindow::handleSignup(const QString &username, const QString &password, const QString &confirm)
 {
     if (username.isEmpty() || password.isEmpty() || confirm.isEmpty()) {
-        qDebug() << "Signup Failed: All fields are required.";
+        emit signupFailed("All fields are required");
         return;
     }
 
     if (password != confirm) {
-        qDebug() << "Signup Failed: Passwords do not match.";
+        emit signupFailed("Passwords do not match.");
         return;
     }
 
     if (usernameExists(username)) {
-        qDebug() << "Signup Failed: Username already exists.";
+        emit signupFailed("Username already exists.");
         return;
     }
 
     if (password.length() < 8) {
-        qDebug() << "Signup Failed: Password must be at least 8 characters.";
+        emit signupFailed("Password must be at least 8 characters.");
         return;
     }
 
     if (saveUser(username, password)) {
-        qDebug() << "Signup Success: Account created successfully.";
-
-        emit signupSuccess();  // <-- ✅ This notifies QML
+        emit signupSuccess();
 
         if (m_view) {
-            m_view->close();    // Optional: only if you're not using StackView
+            m_view->close();
         }
     }
 

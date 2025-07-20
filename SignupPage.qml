@@ -11,6 +11,75 @@ Rectangle {
     // Reference to the main navigation stack
     property StackView stackView: StackView.view
 
+    Connections {
+        target: signupWindow
+
+        function onSignupSuccess() {
+            console.log("Signup success received.");
+            messageDialog.title = "Success";
+            messageDialog.messageText = "Account created successfully!";
+            messageDialog.visible = true;
+        }
+
+        function onSignupFailed(message) {
+            console.log("Signup failed: " + message);
+            messageDialog.title = "Error";
+            messageDialog.messageText = message;
+            messageDialog.visible = true;
+        }
+    }
+
+    Dialog {
+        id: messageDialog
+        property string messageText: ""
+        modal: true
+        visible: false
+
+        width: 400
+        // Optional: explicitly center dialog on screen
+        x: (Screen.width - width) / 2
+        y: (Screen.height - height) / 2
+
+        background: Rectangle {
+            color: "#80000000"  // semi-transparent black
+            radius: 12
+        }
+
+        contentItem: Column {
+            anchors.fill: parent
+            anchors.margins: 20
+            spacing: 12
+
+            Text {
+                text: messageDialog.title
+                font.bold: true
+                font.pixelSize: 22
+                color: "white"
+                horizontalAlignment: Text.AlignHCenter
+                width: parent.width
+            }
+
+            Text {
+                text: messageDialog.messageText !== "" ? messageDialog.messageText : " "
+                wrapMode: Text.WordWrap
+                color: "white"
+                horizontalAlignment: Text.AlignHCenter
+                width: parent.width
+            }
+        }
+
+        onAccepted: visible = false
+    }
+
+
+    Connections {
+        target: signupWindow
+         function onSignupSuccess() {
+            console.log("Signup success received.");
+            stackView.pop();
+        }
+    }
+
     RowLayout {
         anchors.fill: parent
         spacing: 0

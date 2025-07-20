@@ -27,7 +27,7 @@ LoginWindow::~LoginWindow()
 void LoginWindow::handleLogin(const QString &username, const QString &password)
 {
     if (password.length() < 8) {
-        emit loginFailed("Password must have at least 8 characters.");
+        emit loginFailed("Incorrect Username or Password");
         return;
     }
 
@@ -44,7 +44,7 @@ void LoginWindow::handleLogin(const QString &username, const QString &password)
         home->show();
 
         if (m_view) {
-            m_view->close();
+            m_view->hide();
         }
 
     } else {

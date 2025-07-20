@@ -16,10 +16,9 @@ public:
     Q_INVOKABLE void goToLogin();
     void show();
 
-
 signals:
     void signupSuccess();
-
+    void signupFailed(const QString &message);
 
 private:
     bool usernameExists(const QString &username);

@@ -11,6 +11,60 @@ Rectangle {
     // Reference to the main navigation stack
     property StackView stackView: StackView.view
 
+    Connections {
+            target: loginWindow
+
+            function onLoginSuccess() {
+                console.log("loginSuccess signal received");
+                messageDialog.title = "Success";
+                messageDialog.messageText = "Login successful!";
+                messageDialog.visible = false;
+            }
+
+            function onLoginFailed(message) {
+                console.log("loginFailed signal received: " + message);
+                messageDialog.title = "Error";
+                messageDialog.messageText = message;
+                messageDialog.visible = true;
+            }
+        }
+
+    Dialog {
+        id: messageDialog
+        property string messageText: "\n"
+        title: "Message"
+        modal: true
+        visible: false
+        onAccepted: visible = false
+
+        // Center the dialog on screen
+        // Dialog is centered by default but let's be explicit
+        x: (Screen.width - width) / 2
+        y: (Screen.height - height) / 2
+
+        // Make dialog background semi-transparent black
+        background: Rectangle {
+            color: "#80000000"  // 50% transparent black
+            radius: 12
+        }
+
+        // Limit width to avoid binding loops
+        width: 400
+
+        contentItem: Text {
+            text: messageDialog.messageText !== "" ? messageDialog.messageText : " "
+                    wrapMode: Text.WordWrap
+                    color: "white"
+                    padding: 20           // add padding to prevent overlap with title
+                    anchors.fill: parent
+                    horizontalAlignment: Text.AlignHCenter
+                    verticalAlignment: Text.AlignVCenter
+        }
+    }
+
+
+
+
     RowLayout {
         anchors.fill: parent
         spacing: 0
