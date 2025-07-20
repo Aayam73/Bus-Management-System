@@ -1,6 +1,7 @@
 #ifndef LOGINWINDOW_H
 #define LOGINWINDOW_H
 
+#include "homewindow.h"
 #include <QObject>
 #include <QQuickView>
 
@@ -25,6 +26,7 @@ private:
     bool authenticateUser(const QString &username, const QString &password);
 
     QQuickView *m_view;
+    HomeWindow *m_homeWindow = nullptr;
 
 };
 #endif // LOGINWINDOW_H

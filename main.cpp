@@ -68,22 +68,13 @@ int main(int argc, char *argv[])
     StartWindow startWindow;
     SignupWindow signup;
     LoginWindow login;
-    HomeWindow home;
+    HomeWindow homeWindow;
     engine.rootContext()->setContextProperty("startWindow", &startWindow);
     engine.rootContext()->setContextProperty("signupWindow", &signup);
     engine.rootContext()->setContextProperty("loginWindow", &login);
+    engine.rootContext()->setContextProperty("homeWindow", &homeWindow);
 
     engine.load(QUrl("qrc:/Qml/StartPage.qml"));
-
-    QObject::connect(&login, &LoginWindow::loginSuccess, [&]() {
-        qDebug() << "Login successful. Closing QML and opening HomeWindow.";
-
-        // Close QML view
-        QObject *root = engine.rootObjects().first();
-        if (auto window = qobject_cast<QWindow *>(root)) {
-            window->close();
-        }
-    });
 
     if (engine.rootObjects().isEmpty())
         return -1;

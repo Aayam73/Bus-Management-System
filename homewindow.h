@@ -1,30 +1,31 @@
 #ifndef HOMEWINDOW_H
 #define HOMEWINDOW_H
 
-#include <QWidget>
-
+#include <QObject>
+#include <QQuickView>
 #include <QSqlQueryModel>
+#include <routemodel.h>
 
-namespace Ui {
-class HomeWindow;
-}
-
-class HomeWindow : public QWidget
+class HomeWindow : public QObject
 {
     Q_OBJECT
+    Q_PROPERTY(RouteModel* model READ model CONSTANT)
 
 public:
-    explicit HomeWindow(QWidget *parent = nullptr);
+    explicit HomeWindow(QObject *parent = nullptr);
     ~HomeWindow();
 
-private slots:
-    void on_btnSearch_clicked();
+    RouteModel* model() const;
+    Q_INVOKABLE void searchRoute(const QString &from, const QString &to);
+    Q_INVOKABLE QStringList getDistricts() const;
 
-    void on_btnAccount_clicked();
+    void show();
 
 private:
-    Ui::HomeWindow *ui;
-    QSqlQueryModel *model;
+    RouteModel *m_model;
+
+    QQuickView *m_view;
+
 };
 
 #endif // HOMEWINDOW_H

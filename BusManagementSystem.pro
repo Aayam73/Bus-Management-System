@@ -7,6 +7,8 @@ QT += core gui sql
 CONFIG += console
 QT += quick gui
 QT += quickcontrols2
+QT += core gui sql quick
+
 
 
 
@@ -22,6 +24,7 @@ SOURCES += \
     homewindow.cpp \
     main.cpp \
     loginwindow.cpp \
+    routemodel.cpp \
     signupwindow.cpp \
     startwindow.cpp
 
@@ -32,14 +35,14 @@ HEADERS += \
     confirmationwindow.h \
     homewindow.h \
     loginwindow.h \
+    routemodel.h \
     signupwindow.h \
     startwindow.h \
 
 FORMS += \
     accountwindow.ui \
     bookingwindow.ui \
-    confirmationwindow.ui \
-    homewindow.ui \
+    confirmationwindow.ui
 
 
 # Default rules for deployment.

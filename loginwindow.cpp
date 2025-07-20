@@ -1,10 +1,11 @@
 #include "loginwindow.h"
-#include "homewindow.h"
 #include "signupwindow.h"
 #include <QSqlQuery>
 #include <QSqlError>
 #include <QDebug>
 #include <QQmlContext>
+#include <QQmlComponent>
+#include <QQmlEngine>
 
 
 LoginWindow::LoginWindow(QObject *parent)
@@ -14,6 +15,8 @@ LoginWindow::LoginWindow(QObject *parent)
     m_view->setResizeMode(QQuickView::SizeRootObjectToView);
     m_view->rootContext()->setContextProperty("loginWindow", this);
     m_view->setSource(QUrl("qrc:/Qml/LoginPage.qml"));
+
+    m_homeWindow = new HomeWindow(this);
 }
 
 LoginWindow::~LoginWindow()
@@ -39,15 +42,17 @@ void LoginWindow::handleLogin(const QString &username, const QString &password)
     if (authenticateUser(username, password)) {
         emit loginSuccess();
 
-        // Open home window (old UI widget) if you want or handle in QML navigation
-        HomeWindow *home = new HomeWindow();
-        home->show();
+        if (m_homeWindow) {
+            m_homeWindow->show();
+        }
+        // Close login window
 
         if (m_view) {
-            m_view->hide();
+            m_view->close();
         }
+    }
 
-    } else {
+     else {
         emit loginFailed("Incorrect username or password.");
     }
 }
