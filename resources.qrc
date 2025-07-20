@@ -7,4 +7,7 @@
         <file>SignupPage.qml</file>
         <file>StartPage.qml</file>
     </qresource>
+    <qresource prefix="/assets">
+        <file>database/bus_database.db</file>
+    </qresource>
 </RCC>

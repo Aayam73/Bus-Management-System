@@ -15,20 +15,38 @@
 #include <QtCore/qurl.h>
 #include <QQuickStyle>
 #include <QApplication>
+#include <QStandardPaths>
+
 
 
 void connectToDatabase() {
-    QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE");
-    QString dbPath = "database/bus_database.db";
+    QString dataDir = QStandardPaths::writableLocation(QStandardPaths::AppDataLocation);
+    QDir().mkpath(dataDir);  // Make sure the directory exists
+
+    QString dbPath = dataDir + "/bus_database.db";
     qDebug() << "Trying to open database at:" << dbPath;
+
+    // Copy the default DB from resources if it doesn't exist
+    if (!QFile::exists(dbPath)) {
+        qDebug() << "Database file not found. Copying from resources...";
+        if (!QFile::copy(":/assets/database/bus_database.db", dbPath)) {
+            qDebug() << "Failed to copy default database.";
+            QMessageBox::critical(nullptr, "Database Error", "Failed to copy default database from resources.");
+            return;
+        }
+    }
+
+    // Open database
+    QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE");
     db.setDatabaseName(dbPath);
     if (!db.open()) {
-        qDebug() << " Failed to open database:" << db.lastError().text();
+        qDebug() << "Failed to open database:" << db.lastError().text();
         QMessageBox::critical(nullptr, "Database Error", "Failed to open database:\n" + db.lastError().text());
     } else {
         qDebug() << "Database connected successfully!";
     }
 }
+
 
 int main(int argc, char *argv[])
 {
