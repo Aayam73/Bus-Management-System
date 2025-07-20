@@ -17,6 +17,10 @@ public:
                                     const QString &id,
                                     bool isEsewa,
                                     const QString &mpin);
+
+signals:
+    void validationFailed(const QString &message);
+    void paymentProcessed(const QString &name, const QString &method);
 };
 
 #endif // PAYMENTHANDLER_H

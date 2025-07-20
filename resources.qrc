@@ -1,7 +1,4 @@
 <RCC>
-    <qresource prefix="/new/prefix1">
-        <file>paymentportal.qml</file>
-    </qresource>
     <qresource prefix="/">
         <file>paymentportal.qml</file>
     </qresource>

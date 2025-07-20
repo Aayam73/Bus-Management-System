@@ -1,5 +1,7 @@
 QT       += core gui
 QT += qml quick gui
+QT += quick quickcontrols2
+
 
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
