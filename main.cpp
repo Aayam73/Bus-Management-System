@@ -1,32 +1,41 @@
+#include <QGuiApplication>
+#include <QQmlApplicationEngine>
+#include <QQmlContext>
+#include <QQuickStyle>
+#include <QIcon>
+#include <QPalette>
 
-#include "startwindow.h"
-#include <QApplication>
-#include <QMessageBox>
-#include <QSqlDatabase>
-#include <QSqlError>
-#include <QDebug>
-#include <QCoreApplication>
-#include <QDir>
-
-void connectToDatabase() {
-    QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE");
-    QString dbPath = "database/bus_database.db";
-    qDebug() << "Trying to open database at:" << dbPath;
-    db.setDatabaseName(dbPath);
-    if (!db.open()) {
-        qDebug() << " Failed to open database:" << db.lastError().text();
-        QMessageBox::critical(nullptr, "Database Error", "Failed to open database:\n" + db.lastError().text());
-    } else {
-        qDebug() << "Database connected successfully!";
-    }
-}
+#include "PaymentHandler.h"
 
 int main(int argc, char *argv[])
 {
-    QApplication a(argc, argv);
-    connectToDatabase();
-    StartWindow w;
-    w.show();
-    return a.exec();
-}
+    // Core settings
+    QGuiApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
+    QGuiApplication::setAttribute(Qt::AA_UseHighDpiPixmaps);
+    // Set this BEFORE creating QGuiApplication
+  // Or "Material", "Basic"
+    QGuiApplication app(argc, argv);
+    app.setApplicationName("Payment Portal");
+    app.setWindowIcon(QIcon(":/assets/icon.png"));
 
+    // Style configuration (try these in order if Fusion doesn't work
+    // Set palette for Fusion styl
+
+    QQmlApplicationEngine engine;
+
+    // Register C++ components
+    PaymentHandler paymentHandler;
+    engine.rootContext()->setContextProperty("paymentHandler", &paymentHandler);
+
+    // Load QML with error handling
+    const QUrl qmlUrl(QStringLiteral("qrc:/paymentportal.qml"));
+    QObject::connect(&engine, &QQmlApplicationEngine::objectCreated,
+                     &app, [qmlUrl](QObject *obj, const QUrl &objUrl) {
+                         if (!obj && qmlUrl == objUrl)
+                             QCoreApplication::exit(-1);
+                     }, Qt::QueuedConnection);
+
+    engine.load(qmlUrl);
+
+    return app.exec();
+}
