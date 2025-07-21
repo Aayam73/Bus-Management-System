@@ -287,9 +287,18 @@ Rectangle {
                                 MouseArea {
                                     anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor
                                     onClicked: {
-                                        // Make sure you use 'model.route_id' here, not just 'route_id'
-                                        console.log("Book clicked for route_id:", model.route_id)
-                                        homeWindow.bookTicket(model.route_id)
+                                        homeWindow.openBookingPage(
+                                                                    model.route_id,
+                                                                    model.from_district,
+                                                                    model.to_district,
+                                                                    model.departure_time,
+                                                                    model.arrival_time,
+                                                                    model.price,
+                                                                    model.bus_no,
+                                                                    model.driver_info,
+                                                                    model.drivers_cellno,
+                                                                    model.seats
+                                                                )
                                     }
                                     onEntered: parent.color = "#9575cd"; onExited: parent.color = "#7e57c2"
                                 }

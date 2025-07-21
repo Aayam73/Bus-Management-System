@@ -1,17 +1,25 @@
 #include "bookingwindow.h"
 #include "homewindow.h"
-#include "ui_bookingwindow.h"
+#include <QDebug>
+#include <QQmlContext>
 
-BookingWindow::BookingWindow(QWidget *parent)
-    : QWidget(parent)
-    , ui(new Ui::BookingWindow)
+BookingWindow::BookingWindow(QObject *parent)
+    : QObject(parent)
 {
-    ui->setupUi(this);
+    m_view = new QQuickView();
+    m_view->rootContext()->setContextProperty("bookingWindow", this);
+    m_view->setSource(QUrl("qrc:/Qml/BookingPage.qml"));
+    m_view->setResizeMode(QQuickView::SizeRootObjectToView);
+
 }
 
 BookingWindow::~BookingWindow()
 {
-    delete ui;
+    if (m_view) {
+        m_view->close();
+        m_view->deleteLater();
+        m_view = nullptr;
+    }
 }
 
 void BookingWindow::setRouteData(const QString &routeId, const QString &from,
@@ -19,31 +27,38 @@ void BookingWindow::setRouteData(const QString &routeId, const QString &from,
                                  const QString &arrival, const QString &price,
                                  const QString &bus, const QString &driver,
                                  const QString &phone, const QString &seats) {
-    ui->labelRouteId->setText(routeId);
-    ui->labelFrom->setText(from);
-    ui->labelTo->setText(to);
-    ui->labelDeparture->setText(departure);
-    ui->labelArrival->setText(arrival);
-    ui->labelPrice->setText(price);
-    ui->labelBus->setText(bus);
-    ui->labelDriver->setText(driver);
-    ui->labelPhone->setText(phone);
-    ui->labelSeats->setText(seats);
+    if (m_routeId != routeId) { m_routeId = routeId; emit routeIdChanged(routeId); }
+    if (m_fromLocation != from) { m_fromLocation = from; emit fromLocationChanged(from); }
+    if (m_toLocation != to) { m_toLocation = to; emit toLocationChanged(to); }
+    if (m_departureTime != departure) { m_departureTime = departure; emit departureTimeChanged(departure); }
+    if (m_arrivalTime != arrival) { m_arrivalTime = arrival; emit arrivalTimeChanged(arrival); }
+    if (m_ticketPrice != price) { m_ticketPrice = price; emit ticketPriceChanged(price); }
+    if (m_busNo != bus) { m_busNo = bus; emit busNoChanged(bus); }
+    if (m_driverInfo != driver) { m_driverInfo = driver; emit driverInfoChanged(driver); }
+    if (m_contactPhone != phone) { m_contactPhone = phone; emit contactPhoneChanged(phone); }
+    if (m_seatNo != seats) { m_seatNo = seats; emit seatNoChanged(seats); }
+
+    qDebug() << "Booking data updated in C++ object:";
+    qDebug() << "Route ID:" << m_routeId << "From:" << m_fromLocation << "To:" << m_toLocation;
 
 
 }
 
-void BookingWindow::on_btnReturn_clicked()
+void BookingWindow::showHomeWindow()
 {
-    HomeWindow *home = new HomeWindow;
+    qDebug() << "showHomeWindow() called from QML. Opening HomeWindow...";
+    HomeWindow *home = new HomeWindow; // Assuming HomeWindow is a QWidget
     home->show();
-    this->close();
-
 }
 
-
-void BookingWindow::on_pushButton_clicked()
+void BookingWindow::initiatePayment()
 {
+    qDebug() << "initiatePayment() called from QML. Processing payment...";
 
 }
 
+void BookingWindow::closeWindow() {
+    if (m_view) {
+        m_view->close();
+    }
+}

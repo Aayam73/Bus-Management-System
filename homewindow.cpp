@@ -1,4 +1,5 @@
 #include "homewindow.h"
+#include "bookingwindow.h"
 #include <QSqlQuery>
 #include <QSqlError>
 #include <QMessageBox>
@@ -81,6 +82,31 @@ QStringList HomeWindow::getDistricts() const {
 
     return list;
 }
+
+void HomeWindow::openBookingPage(
+    const QString &routeId,
+    const QString &from,
+    const QString &to,
+    const QString &departure,
+    const QString &arrival,
+    const QString &price,
+    const QString &bus,
+    const QString &driver,
+    const QString &phone,
+    const QString &seats
+    ) {
+    if (!m_bookingWindow) {
+        m_bookingWindow = new BookingWindow(this);  // Create once and reuse
+    }
+
+    m_bookingWindow->setRouteData(routeId, from, to, departure, arrival, price, bus, driver, phone, seats);
+    if (m_bookingWindow->view()) { // Add a getter to BookingWindow for m_view if needed
+        m_bookingWindow->view()->show();
+    }
+
+    emit bookingPageOpened();
+}
+
 
 HomeWindow::~HomeWindow()
 {

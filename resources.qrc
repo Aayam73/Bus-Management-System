@@ -7,6 +7,7 @@
         <file>SignupPage.qml</file>
         <file>StartPage.qml</file>
         <file>HomePage.qml</file>
+        <file>BookingPage.qml</file>
     </qresource>
     <qresource prefix="/assets">
         <file>database/bus_database.db</file>
