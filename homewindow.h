@@ -3,29 +3,32 @@
 
 #include <QObject>
 #include <QQuickView>
-#include <QSqlQueryModel>
-#include <routemodel.h>
+#include <QStringListModel>
+#include <QVariantList>
 
 class HomeWindow : public QObject
 {
     Q_OBJECT
-    Q_PROPERTY(RouteModel* model READ model CONSTANT)
+    Q_PROPERTY(QAbstractListModel* districtModel READ districtModel CONSTANT)
+    Q_PROPERTY(QVariantList routes READ routes NOTIFY searchResultsReady)
 
 public:
     explicit HomeWindow(QObject *parent = nullptr);
     ~HomeWindow();
 
-    RouteModel* model() const;
+    QAbstractListModel* districtModel() const { return m_districtModel; }
     Q_INVOKABLE void searchRoute(const QString &from, const QString &to);
     Q_INVOKABLE QStringList getDistricts() const;
-
+    QVariantList routes() const { return m_routes; }
     void show();
 
+signals:
+    void searchResultsReady(const QVariantList &routes);  // ✅ Send search results to QML
+
 private:
-    RouteModel *m_model;
-
-    QQuickView *m_view;
-
+    QStringListModel* m_districtModel = nullptr;
+    QQuickView *m_view = nullptr;
+    QVariantList m_routes;  // ✅ Store route data
 };
 
 #endif // HOMEWINDOW_H

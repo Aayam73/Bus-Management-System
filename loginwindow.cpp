@@ -47,7 +47,7 @@ void LoginWindow::handleLogin(const QString &username, const QString &password)
         }
         // Close login window
 
-        if (m_view) {
+        if (m_homeWindow) {
             m_view->close();
         }
     }
