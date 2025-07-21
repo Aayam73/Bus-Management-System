@@ -51,6 +51,8 @@ void BookingWindow::showHomeWindow()
     home->show();
 }
 
+
+
 void BookingWindow::initiatePayment()
 {
     qDebug() << "initiatePayment() called from QML. Processing payment...";

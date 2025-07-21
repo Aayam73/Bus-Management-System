@@ -17,30 +17,24 @@ QT += core gui sql quick
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
-    accountwindow.cpp \
-    bookingbuttondelegate.cpp \
     bookingwindow.cpp \
-    confirmationwindow.cpp \
     homewindow.cpp \
     main.cpp \
     loginwindow.cpp \
+    paymenthandler.cpp \
     signupwindow.cpp \
     startwindow.cpp
 
 HEADERS += \
-    accountwindow.h \
-    bookingbuttondelegate.h \
     bookingwindow.h \
-    confirmationwindow.h \
     homewindow.h \
     loginwindow.h \
+    paymenthandler.h \
     signupwindow.h \
     startwindow.h \
 
 FORMS += \
-    accountwindow.ui \
-    bookingwindow.ui \
-    confirmationwindow.ui
+    bookingwindow.ui
 
 
 # Default rules for deployment.

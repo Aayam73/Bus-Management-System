@@ -9,6 +9,8 @@ Rectangle {
     radius: 12
     anchors.centerIn: parent
 
+    property StackView stackView: StackView.view
+
     ColumnLayout {
         anchors.fill: parent
         anchors.margins: 30
@@ -78,7 +80,8 @@ Rectangle {
                 text: "Pay Now"
                 width: 100
                 height: 30
-                onClicked: bookingWindow.initiatePayment()
+                onClicked: {stackView.push({item: Qt.resolvedUrl("qrc:/Qml/PaymentPage.qml")});
+                }
             }
         }
     }

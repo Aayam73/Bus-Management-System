@@ -1,6 +1,7 @@
 
 #include "bookingwindow.h"
 #include "homewindow.h"
+#include "paymenthandler.h"
 #include "startwindow.h"
 #include "signupwindow.h"
 #include "loginwindow.h"
@@ -71,11 +72,13 @@ int main(int argc, char *argv[])
     LoginWindow login;
     HomeWindow homeWindow;
     BookingWindow bookingWindow;
+    PaymentHandler paymentHandler;
     engine.rootContext()->setContextProperty("startWindow", &startWindow);
     engine.rootContext()->setContextProperty("signupWindow", &signup);
     engine.rootContext()->setContextProperty("loginWindow", &login);
     engine.rootContext()->setContextProperty("homeWindow", &homeWindow);
     engine.rootContext()->setContextProperty("bookingWindow", &bookingWindow);
+    engine.rootContext()->setContextProperty("paymentHandler", &paymentHandler);
 
     engine.load(QUrl("qrc:/Qml/StartPage.qml"));
 

@@ -45,6 +45,7 @@ public:
     Q_INVOKABLE void showHomeWindow();
     Q_INVOKABLE void initiatePayment();
     Q_INVOKABLE void closeWindow();
+
     QQuickView* view() const { return m_view; }
 
 signals:
@@ -61,7 +62,6 @@ signals:
 
 private:
     QQuickView *m_view = nullptr;
-
     QString m_routeId;
     QString m_fromLocation;
     QString m_toLocation;
