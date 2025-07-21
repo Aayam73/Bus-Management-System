@@ -64,7 +64,7 @@ Rectangle {
     }
 
     Text {
-        text: "BUS MANAGEMENT SYSTEM"
+        text: "Hamro Bus Sewa"
         font.bold: true
         font.pixelSize: 22
         anchors.top: parent.top
@@ -103,6 +103,7 @@ Rectangle {
                 model: districtModel
                 textRole: "display"
                 editable: true
+                currentIndex: -1
 
                 contentItem: Item {
                     width: parent.width
@@ -113,7 +114,7 @@ Rectangle {
                         anchors.fill: parent
                         text: fromComboBox.editText
                         font: fromComboBox.font
-                        color: fromComboBox.editText === "" && !comboInputFrom.activeFocus ? "transparent" : "#000"
+                        color: fromComboBox.editText === "" && !comboInputFrom.activeFocus ? "transparent" : "#ffffff"
                         onTextChanged: fromComboBox.editText = text
                     }
 
@@ -146,6 +147,7 @@ Rectangle {
                 model: districtModel
                 textRole: "display"
                 editable: true
+                currentIndex: -1
 
                 contentItem: Item {
                     width: parent.width
@@ -156,7 +158,7 @@ Rectangle {
                         anchors.fill: parent
                         text: toComboBox.editText
                         font: toComboBox.font
-                        color: toComboBox.editText === "" && !comboInputTo.activeFocus ? "transparent" : "#000"
+                        color: toComboBox.editText === "" && !comboInputTo.activeFocus ? "transparent" : "#ffffff"
                         onTextChanged: toComboBox.editText = text
                     }
 
