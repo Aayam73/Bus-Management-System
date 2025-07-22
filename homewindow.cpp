@@ -9,7 +9,11 @@
 #include <QQmlContext>
 
 HomeWindow::HomeWindow(QObject *parent)
-    : QObject(parent), m_districtModel(new QStringListModel(this)) {}
+    : QObject(parent), m_districtModel(new QStringListModel(this))
+{
+    QStringList districts = getDistricts();
+    m_districtModel->setStringList(districts);
+}
 
 void HomeWindow::searchRoute(const QString &from, const QString &to)
 {
@@ -130,4 +134,10 @@ void HomeWindow::show() {
         m_view->setSource(QUrl("qrc:/Qml/HomePage.qml"));
     }
     m_view->show();
+}
+
+QQuickView* HomeWindow::view() const
+{
+    if (!m_view) qWarning() << "Warning: HomeWindow::view() is null!";
+    return m_view;
 }

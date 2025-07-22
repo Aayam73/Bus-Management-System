@@ -80,8 +80,7 @@ Rectangle {
                 text: "Pay Now"
                 width: 100
                 height: 30
-                onClicked: {stackView.push({item: Qt.resolvedUrl("qrc:/Qml/PaymentPage.qml")});
-                }
+                onClicked: bookingWindow.payNowClicked()
             }
         }
     }

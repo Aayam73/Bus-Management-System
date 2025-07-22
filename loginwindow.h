@@ -17,6 +17,8 @@ public:
     Q_INVOKABLE void handleLogin(const QString &username, const QString &password);
     Q_INVOKABLE void goToSignup();
     void show();
+    void close();
+    QQuickView* view() const { return m_view; }
 
 signals:
     void loginSuccess();

@@ -34,6 +34,7 @@ public:
         );
     QVariantList routes() const { return m_routes; }
     void show();
+    QQuickView* view() const;
 
 signals:
     void searchResultsReady(const QVariantList &routes);

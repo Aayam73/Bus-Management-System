@@ -1,6 +1,7 @@
 #ifndef BOOKINGWINDOW_H
 #define BOOKINGWINDOW_H
 
+#include "paymenthandler.h"
 #include <QObject>
 #include <QQuickView>
 
@@ -43,9 +44,8 @@ public:
                       const QString &phone, const QString &seats);
 
     Q_INVOKABLE void showHomeWindow();
-    Q_INVOKABLE void initiatePayment();
+    Q_INVOKABLE void payNowClicked();
     Q_INVOKABLE void closeWindow();
-
     QQuickView* view() const { return m_view; }
 
 signals:
@@ -62,6 +62,7 @@ signals:
 
 private:
     QQuickView *m_view = nullptr;
+    PaymentHandler *m_paymentHandler = nullptr;
     QString m_routeId;
     QString m_fromLocation;
     QString m_toLocation;

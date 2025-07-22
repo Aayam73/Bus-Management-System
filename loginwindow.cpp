@@ -14,6 +14,7 @@ LoginWindow::LoginWindow(QObject *parent)
     m_view = new QQuickView();
     m_view->setResizeMode(QQuickView::SizeRootObjectToView);
     m_view->rootContext()->setContextProperty("loginWindow", this);
+    m_view->rootContext()->setContextProperty("homeWindow", m_homeWindow);
     m_view->setSource(QUrl("qrc:/Qml/LoginPage.qml"));
 
     m_homeWindow = new HomeWindow(this);
@@ -41,15 +42,12 @@ void LoginWindow::handleLogin(const QString &username, const QString &password)
 
     if (authenticateUser(username, password)) {
         emit loginSuccess();
-
-        if (m_homeWindow) {
-            m_homeWindow->show();
+        if (m_view) {
+            m_view->hide();
+            qDebug() << "Login view is:" << m_view;
         }
-        // Close login window
 
-        if (m_homeWindow) {
-            m_view->close();
-        }
+
     }
 
      else {
@@ -99,5 +97,10 @@ void LoginWindow::goToSignup()
 void LoginWindow::show() {
     if (m_view)
         m_view->show();
+}
+
+void LoginWindow::close() {
+    if (m_view)
+        m_view->close();
 }
 

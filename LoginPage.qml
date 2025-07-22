@@ -16,9 +16,13 @@ Rectangle {
 
             function onLoginSuccess() {
                 console.log("loginSuccess signal received");
-                messageDialog.title = "Success";
-                messageDialog.messageText = "Login successful!";
-                messageDialog.visible = false;
+                console.log("homeWindow:", loginWindow.homeWindow);
+                console.log("districtModel:", loginWindow.homeWindow ? loginWindow.homeWindow.districtModel : "no homeWindow");
+                stackView.replace("qrc:/Qml/HomePage.qml", {
+                                      homeWindow: homeWindow,
+                                      districtModel: homeWindow ? homeWindow.districtModel : null
+                                  });
+
             }
 
             function onLoginFailed(message) {

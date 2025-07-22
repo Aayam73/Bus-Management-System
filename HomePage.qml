@@ -13,6 +13,8 @@ Rectangle {
         GradientStop { position: 1.0; color: "#e0c3fc" }
     }
 
+    property var homeWindow
+    property var districtModel
     property StackView stackView: StackView.view
 
     ListModel {

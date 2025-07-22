@@ -10,6 +10,7 @@ BookingWindow::BookingWindow(QObject *parent)
     m_view->rootContext()->setContextProperty("bookingWindow", this);
     m_view->setSource(QUrl("qrc:/Qml/BookingPage.qml"));
     m_view->setResizeMode(QQuickView::SizeRootObjectToView);
+    qDebug() << "BookingWindow created at" << this;
 
 }
 
@@ -47,15 +48,20 @@ void BookingWindow::setRouteData(const QString &routeId, const QString &from,
 void BookingWindow::showHomeWindow()
 {
     qDebug() << "showHomeWindow() called from QML. Opening HomeWindow...";
-    HomeWindow *home = new HomeWindow; // Assuming HomeWindow is a QWidget
+    HomeWindow *home = new HomeWindow;
     home->show();
 }
 
 
 
-void BookingWindow::initiatePayment()
+void BookingWindow::payNowClicked()
 {
-    qDebug() << "initiatePayment() called from QML. Processing payment...";
+    this->view()->hide();  // Or close()
+
+    if (!m_paymentHandler) {
+        m_paymentHandler = new PaymentHandler(this->parent());
+    }
+    m_paymentHandler->view()->show();
 
 }
 
