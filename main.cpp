@@ -1,32 +1,44 @@
+#include <QGuiApplication>
+#include <QQmlApplicationEngine>
+#include <QQmlContext>
+#include <QtQuickControls2/QQuickStyle>
+#include "reservationhandler.h"
+#include <QtCore/QString>
 
-#include "startwindow.h"
-#include <QApplication>
-#include <QMessageBox>
-#include <QSqlDatabase>
-#include <QSqlError>
-#include <QDebug>
-#include <QCoreApplication>
-#include <QDir>
 
-void connectToDatabase() {
-    QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE");
-    QString dbPath = "database/bus_database.db";
-    qDebug() << "Trying to open database at:" << dbPath;
-    db.setDatabaseName(dbPath);
-    if (!db.open()) {
-        qDebug() << " Failed to open database:" << db.lastError().text();
-        QMessageBox::critical(nullptr, "Database Error", "Failed to open database:\n" + db.lastError().text());
-    } else {
-        qDebug() << "Database connected successfully!";
-    }
-}
+using namespace Qt::StringLiterals;
+
+
 
 int main(int argc, char *argv[])
 {
-    QApplication a(argc, argv);
-    connectToDatabase();
-    StartWindow w;
-    w.show();
-    return a.exec();
-}
+    QGuiApplication app(argc, argv);
+    QQuickStyle::setStyle("Material");
 
+    QQmlApplicationEngine engine;
+
+    ReservationHandler reservationHandler;
+    engine.rootContext()->setContextProperty("reservationHandler", &reservationHandler);
+    QVariantMap booking;
+    booking["name"] = "Test User";
+    booking["phone"] = "9812345678";
+    booking["paymentMethod"] = "Esewa";
+    booking["from"] = "Kathmandu";
+    booking["to"] = "Pokhara";
+    booking["seatNumber"] = "A1";
+    booking["reservationDate"] = "2025-07-26";
+    engine.rootContext()->setContextProperty("booking", booking);
+
+    const QUrl url(u"qrc:/ReservationWindow.qml"_s);
+
+    QObject::connect(
+        &engine, &QQmlApplicationEngine::objectCreated,
+        &app, [url](QObject *obj, const QUrl &objUrl) {
+            if (!obj && url == objUrl)
+                QCoreApplication::exit(-1);
+        },
+        Qt::QueuedConnection);
+
+    engine.load(url);
+    return app.exec();
+}
