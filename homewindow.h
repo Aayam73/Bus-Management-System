@@ -6,6 +6,7 @@
 #include <QQuickView>
 #include <QStringListModel>
 #include <QVariantList>
+#include <QDate>
 
 class HomeWindow : public QObject
 {
@@ -32,8 +33,10 @@ public:
         const QString &phone,
         const QString &seats
         );
+    void onSeatsUpdated(const QString &routeId, int seats);
     QVariantList routes() const { return m_routes; }
     void show();
+    void refreshCurrentSearch();
     QQuickView* view() const;
 
 signals:
@@ -45,6 +48,8 @@ private:
     QQuickView *m_view = nullptr;
     QVariantList m_routes;
     BookingWindow* m_bookingWindow = nullptr;
+    QString m_lastFromDistrict;
+    QString m_lastToDistrict;
 };
 
 #endif // HOMEWINDOW_H

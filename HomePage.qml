@@ -75,17 +75,6 @@ Rectangle {
         color: "#333"
     }
 
-    Button {
-        text: "Account"
-        anchors.right: parent.right
-        anchors.top: parent.top
-        anchors.margins: 12
-        background: Rectangle {
-            color: "#ff88aa"
-            radius: 10
-        }
-    }
-
     RowLayout {
         id: searchRow
         anchors.top: parent.top
@@ -215,8 +204,8 @@ Rectangle {
             width: parent.width - 20
             anchors.top: searchButton.bottom
             anchors.bottom: footer.top
-            anchors.topMargin: 20
-            anchors.bottomMargin: 10
+            anchors.topMargin: 40
+            anchors.bottomMargin: 0
             anchors.horizontalCenter: parent.horizontalCenter
             color: "#d1c4e9"
             radius: 10
@@ -230,13 +219,19 @@ Rectangle {
                 spacing: 10
                 width: parent.width - (resultsColumn.padding * 2) // Reference resultsColumn's padding
 
+                Rectangle {
+                        width: 10
+                        height: parent.height
+                        color: "transparent"
+                    }
+
                 Rectangle { width: 60; height: 30; color: "#9575cd"; Text { anchors.centerIn: parent; text: "Route ID"; font.bold: true; color: "white" } }
                 Rectangle { width: 80; height: 30; color: "#9575cd"; Text { anchors.centerIn: parent; text: "From"; font.bold: true; color: "white" } }
                 Rectangle { width: 80; height: 30; color: "#9575cd"; Text { anchors.centerIn: parent; text: "To"; font.bold: true; color: "white" } }
                 Rectangle { width: 80; height: 30; color: "#9575cd"; Text { anchors.centerIn: parent; text: "Depart"; font.bold: true; color: "white" } }
                 Rectangle { width: 80; height: 30; color: "#9575cd"; Text { anchors.centerIn: parent; text: "Arrive"; font.bold: true; color: "white" } }
                 Rectangle { width: 60; height: 30; color: "#9575cd"; Text { anchors.centerIn: parent; text: "Price"; font.bold: true; color: "white" } }
-                Rectangle { width: 60; height: 30; color: "#9575cd"; Text { anchors.centerIn: parent; text: "Bus No"; font.bold: true; color: "white" } }
+                Rectangle { width: 80; height: 30; color: "#9575cd"; Text { anchors.centerIn: parent; text: "Bus No"; font.bold: true; color: "white" } }
                 Rectangle { width: 100; height: 30; color: "#9575cd"; Text { anchors.centerIn: parent; text: "Driver"; font.bold: true; color: "white" } }
                 Rectangle { width: 100; height: 30; color: "#9575cd"; Text { anchors.centerIn: parent; text: "Cell No"; font.bold: true; color: "white" } }
                 Rectangle { width: 40; height: 30; color: "#9575cd"; Text { anchors.centerIn: parent; text: "Seats"; font.bold: true; color: "white" } }
@@ -273,13 +268,19 @@ Rectangle {
                             height: 40 // Each row is 40px high
                             spacing: 10
 
+                            Rectangle {
+                                    width: 6
+                                    height: parent.height
+                                    color: "transparent"
+                                }
+
                             Rectangle { width: 60; height: parent.height; color: "black"; Text { anchors.centerIn: parent; text: model.route_id; color: "white" } }
                             Rectangle { width: 80; height: parent.height; color: "#ede7f6"; Text { anchors.centerIn: parent; text: model.from_district; color: "#333" } }
                             Rectangle { width: 80; height: parent.height; color: "#ede7f6"; Text { anchors.centerIn: parent; text: model.to_district; color: "#333" } }
                             Rectangle { width: 80; height: parent.height; color: "#ede7f6"; Text { anchors.centerIn: parent; text: model.departure_time; color: "#333" } }
                             Rectangle { width: 80; height: parent.height; color: "#ede7f6"; Text { anchors.centerIn: parent; text: model.arrival_time; color: "#333" } }
                             Rectangle { width: 60; height: parent.height; color: "#ede7f6"; Text { anchors.centerIn: parent; text: model.price; color: "#333" } }
-                            Rectangle { width: 60; height: parent.height; color: "#ede7f6"; Text { anchors.centerIn: parent; text: model.bus_no; color: "#333" } }
+                            Rectangle { width: 80; height: parent.height; color: "#ede7f6"; Text { anchors.centerIn: parent; text: model.bus_no; color: "#333" } }
                             Rectangle { width: 100; height: parent.height; color: "#ede7f6"; Text { anchors.centerIn: parent; text: model.driver_info; color: "#333" } }
                             Rectangle { width: 100; height: parent.height; color: "#ede7f6"; Text { anchors.centerIn: parent; text: model.drivers_cellno; color: "#333" } }
                             Rectangle { width: 40; height: parent.height; color: "#ede7f6"; Text { anchors.centerIn: parent; text: model.seats; color: "#333" } }
@@ -320,12 +321,5 @@ Rectangle {
         anchors.bottom: parent.bottom
         color: "#d1c4e9"
         opacity: 0.9
-
-        Text {
-            text: "Welcome to the Bus Management System. Here you can search bus schedules, book seats, and view account details."
-            anchors.centerIn: parent
-            font.pixelSize: 12
-            color: "#333"
-        }
     }
 }

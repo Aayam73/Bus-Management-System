@@ -15,6 +15,17 @@ Rectangle {
         GradientStop { position: 1.0; color: "#2c3e50" }
     }
 
+    property string routeId: ""
+    property string fromLocation: ""
+    property string toLocation: ""
+    property string departureTime: ""
+    property string arrivalTime: ""
+    property real ticketPrice: 0
+    property string busNo: ""
+    property string driverInfo: ""
+    property string contactPhone: ""
+    property string seatNo: ""
+
     // Floating background elements
     Rectangle {
         anchors.fill: parent
@@ -59,6 +70,9 @@ Rectangle {
         scale: 0.88
         opacity: 0
         Component.onCompleted: enterAnimation.start()
+
+        property StackView stackView: StackView.view
+
 
         // Entry animation
         ParallelAnimation {
@@ -262,7 +276,9 @@ Rectangle {
             duration: 110
         }
         ScriptAction {
-            script: bookingWindow.payNowClicked()
+            script: {
+                bookingWindow.payNowClicked(bookingWindow.routeId);
+            }
         }
     }
 }

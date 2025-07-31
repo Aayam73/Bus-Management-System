@@ -41,6 +41,18 @@ void LoginWindow::handleLogin(const QString &username, const QString &password)
     }
 
     if (authenticateUser(username, password)) {
+        QSqlDatabase db = QSqlDatabase::database("main");
+        QSqlQuery query(db);
+        query.prepare("SELECT id FROM users WHERE username = :username");
+        query.bindValue(":username", username);
+
+        if (query.exec() && query.next()) {
+            currentUserId = query.value(0).toInt();   // set global user ID
+            qDebug() << "Logged-in user ID is:" << currentUserId;
+        } else {
+            qDebug() << "Could not fetch user ID:" << query.lastError().text();
+            currentUserId = -1;
+        }
         emit loginSuccess();
         if (m_view) {
             m_view->hide();

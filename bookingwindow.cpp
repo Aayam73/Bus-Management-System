@@ -2,15 +2,24 @@
 #include "homewindow.h"
 #include <QDebug>
 #include <QQmlContext>
+#include <QDate>
+#include <QQuickView>
+#include <QQuickItem>
+
 
 BookingWindow::BookingWindow(QObject *parent)
     : QObject(parent)
 {
     m_view = new QQuickView();
+    m_paymentHandler = new PaymentHandler(this);
     m_view->rootContext()->setContextProperty("bookingWindow", this);
     m_view->setSource(QUrl("qrc:/Qml/BookingPage.qml"));
     m_view->setResizeMode(QQuickView::SizeRootObjectToView);
     qDebug() << "BookingWindow created at" << this;
+    QObject *root = m_view->rootObject();
+    if (root) {
+        root->setProperty("routeId", routeId());
+    }
 
 }
 
@@ -39,10 +48,6 @@ void BookingWindow::setRouteData(const QString &routeId, const QString &from,
     if (m_contactPhone != phone) { m_contactPhone = phone; emit contactPhoneChanged(phone); }
     if (m_seatNo != seats) { m_seatNo = seats; emit seatNoChanged(seats); }
 
-    qDebug() << "Booking data updated in C++ object:";
-    qDebug() << "Route ID:" << m_routeId << "From:" << m_fromLocation << "To:" << m_toLocation;
-
-
 }
 
 void BookingWindow::showHomeWindow()
@@ -54,15 +59,29 @@ void BookingWindow::showHomeWindow()
 
 
 
-void BookingWindow::payNowClicked()
+void BookingWindow::payNowClicked(const QString &routeId)
 {
-    this->view()->hide();  // Or close()
+    qDebug() << "BookingWindow::payNowClicked: routeId =" << routeId;
+    if (routeId.isEmpty()) {
+        qWarning() << "BookingWindow::payNowClicked: routeId is empty!";
+        return;  // Or handle error gracefully
+    }
+
+    this->view()->hide();
 
     if (!m_paymentHandler) {
         m_paymentHandler = new PaymentHandler(this->parent());
     }
-    m_paymentHandler->view()->show();
 
+    m_paymentHandler->setRouteId(routeId);
+
+    if (m_paymentHandler->view()) {
+        m_paymentHandler->view()->show();
+    }
+}
+
+PaymentHandler* BookingWindow::paymentHandler() const {
+    return m_paymentHandler;
 }
 
 void BookingWindow::closeWindow() {

@@ -25,13 +25,16 @@ void HomeWindow::searchRoute(const QString &from, const QString &to)
 
     QSqlQuery query(db);
     query.prepare(R"(
-        SELECT route_id, from_district, to_district, departure_time, arrival_time,
-               price, bus_no, driver_info, drivers_cellno, seats
-        FROM route_display
-        WHERE from_district LIKE :fromDistrict AND to_district LIKE :toDistrict
-    )");
+    SELECT route_id, from_district, to_district, departure_time, arrival_time,
+           price, bus_no, driver_info, drivers_cellno, seats
+    FROM routes1_view
+    WHERE from_district LIKE :fromDistrict AND to_district LIKE :toDistrict
+)");
+    qDebug() << "Prepared query:" << query.lastQuery();
     query.bindValue(":fromDistrict", "%" + from + "%");
     query.bindValue(":toDistrict", "%" + to + "%");
+    qDebug() << "Bound values count:" << query.boundValues().size();
+
 
     if (!query.exec()) {
         qDebug() << "Query failed:" << query.lastError().text();
@@ -53,6 +56,8 @@ void HomeWindow::searchRoute(const QString &from, const QString &to)
         row["seats"] = query.value("seats");
         routes.append(row);
     }
+    m_lastFromDistrict = from;
+    m_lastToDistrict = to;
 
     m_routes = routes;
     emit searchResultsReady(m_routes);
@@ -97,11 +102,13 @@ void HomeWindow::openBookingPage(
     const QString &bus,
     const QString &driver,
     const QString &phone,
-    const QString &seats
-    ) {
+    const QString &seats) {
     if (!m_bookingWindow) {
         m_bookingWindow = new BookingWindow(this);  // Create once and reuse
     }
+
+    connect(m_bookingWindow->paymentHandler(), &PaymentHandler::seatsUpdated,
+            this, &HomeWindow::onSeatsUpdated);
 
     m_bookingWindow->setRouteData(routeId, from, to, departure, arrival, price, bus, driver, phone, seats);
     if (m_bookingWindow->view()) { // Add a getter to BookingWindow for m_view if needed
@@ -109,6 +116,17 @@ void HomeWindow::openBookingPage(
     }
 
     emit bookingPageOpened();
+}
+
+void HomeWindow::refreshCurrentSearch() {
+    // You need to remember last search criteria (from & to districts)
+    searchRoute(m_lastFromDistrict, m_lastToDistrict);
+}
+
+void HomeWindow::onSeatsUpdated(const QString &routeId, int seats) {
+    qDebug() << "HomeWindow: Seats updated for route" << routeId << "to" << seats;
+
+    refreshCurrentSearch();
 }
 
 

@@ -4,6 +4,9 @@
 #include "paymenthandler.h"
 #include <QObject>
 #include <QQuickView>
+#include <QDate>
+
+class PaymentHandler;
 
 class BookingWindow : public QObject
 {
@@ -19,6 +22,7 @@ class BookingWindow : public QObject
     Q_PROPERTY(QString driverInfo READ driverInfo NOTIFY driverInfoChanged)
     Q_PROPERTY(QString contactPhone READ contactPhone NOTIFY contactPhoneChanged)
     Q_PROPERTY(QString seatNo READ seatNo NOTIFY seatNoChanged)
+
 
 public:
     explicit BookingWindow(QObject *parent = nullptr);
@@ -44,9 +48,11 @@ public:
                       const QString &phone, const QString &seats);
 
     Q_INVOKABLE void showHomeWindow();
-    Q_INVOKABLE void payNowClicked();
+    Q_INVOKABLE void payNowClicked(const QString &routeId);
+
     Q_INVOKABLE void closeWindow();
     QQuickView* view() const { return m_view; }
+    PaymentHandler* paymentHandler() const;
 
 signals:
     void routeIdChanged(const QString &);
@@ -59,6 +65,17 @@ signals:
     void driverInfoChanged(const QString &);
     void contactPhoneChanged(const QString &);
     void seatNoChanged(const QString &);
+    void travelDateChanged(const QDate &);
+    void openPaymentPage(const QString &routeId,
+                         const QString &from,
+                         const QString &to,
+                         const QString &departure,
+                         const QString &arrival,
+                         const QString &price,
+                         const QString &bus,
+                         const QString &driver,
+                         const QString &phone,
+                         const QString &seats);
 
 private:
     QQuickView *m_view = nullptr;

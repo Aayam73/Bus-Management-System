@@ -22,19 +22,21 @@ SOURCES += \
     main.cpp \
     loginwindow.cpp \
     paymenthandler.cpp \
+    reservationhandler.cpp \
     signupwindow.cpp \
-    startwindow.cpp
+    startwindow.cpp \
+    qrcodegen.cpp
+
 
 HEADERS += \
     bookingwindow.h \
     homewindow.h \
     loginwindow.h \
     paymenthandler.h \
+    reservationhandler.h \
     signupwindow.h \
     startwindow.h \
-
-FORMS += \
-    bookingwindow.ui
+    qrcodegen.hpp
 
 
 # Default rules for deployment.

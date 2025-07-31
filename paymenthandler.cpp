@@ -1,15 +1,43 @@
 #include "paymenthandler.h"
+#include "reservationhandler.h"
 #include <QDebug>
 #include <QMessageBox>
 #include <QQuickView>
 #include <QQmlContext>
+#include <QQuickItem>
+#include <QSqlQuery>
+#include <QSqlError>
+
 
 PaymentHandler::PaymentHandler(QObject *parent) : QObject(parent)
 {
-    m_view = new QQuickView();
+    m_view = new QQuickView(nullptr);
     m_view->rootContext()->setContextProperty("paymentHandler",this);
     m_view->setResizeMode(QQuickView::SizeRootObjectToView);
     m_view->setSource(QUrl(QStringLiteral("qrc:/Qml/PaymentPage.qml")));
+    m_view->rootContext()->setContextProperty("routeId", m_routeId);
+
+    qDebug() << "QML status:" << m_view->status();
+    QObject::connect(m_view, &QQuickView::statusChanged, [this](QQuickView::Status s) {
+        qDebug() << "QQuickView status changed:" << s;
+
+        if (s == QQuickView::Error) {
+            for (const auto &err : m_view->errors()) {
+                qDebug() << "QML error:" << err.toString();
+            }
+        }
+    });
+    connect(this, &PaymentHandler::onPaymentFailed, this, [this](const QString &msg){
+        QMessageBox::warning(nullptr, "Booking Failed", msg);
+    });
+
+    connect(this, &PaymentHandler::seatsUpdated, this, [this](const QString &routeId, int seats){
+        // Update UI seat count dynamically
+        QObject *rootObj = m_view->rootObject();
+        if (rootObj) {
+            rootObj->setProperty("availableSeats", seats); // QML property
+        }
+    });
 }
 
 void PaymentHandler::processPayment(const QString &name, const QString &email, const QString &phone,
@@ -97,6 +125,73 @@ bool PaymentHandler::validateMpin(const QString &mpin) {
     QRegularExpression mpinRegex(R"(^\d{4}$)");
     return mpinRegex.match(mpin).hasMatch();
 }
+
+void PaymentHandler::setRouteId(const QString &routeId)
+{
+    if (m_routeId != routeId) {
+        m_routeId = routeId;
+        emit routeIdChanged();
+
+        qDebug() << "PaymentHandler::routeId updated to:" << m_routeId;
+    }
+}
+
+void PaymentHandler::payNowClicked(
+    const QString &routeId,
+    const QString &passengerName,
+    const QString &passengerEmail,
+    const QString &passengerPhone,
+    const QString &paymentMethod)
+{
+    // Hide payment window
+    if (m_view) m_view->hide();
+
+    // Decrease seat count by 1, only if seats > 0
+    QSqlDatabase db = QSqlDatabase::database("main"); // Use your existing connection
+    if (!db.isOpen()) {
+        qDebug() << "DB not open, attempting to open...";
+        if (!db.open()) {
+            qDebug() << "Failed to open DB:" << db.lastError().text();
+            return;
+        }
+    }
+
+    QSqlQuery query(db);
+
+    // Update only if seats > 0
+    query.prepare("UPDATE routes1 SET seats = seats - 1 WHERE route_id = :routeId AND seats > 0");
+
+    query.bindValue(":routeId", routeId);
+
+    if (!query.exec()) {
+        qDebug() << "Error updating seats:" << query.lastError().text();
+    } else if (query.numRowsAffected() == 0) {
+        qDebug() << "No seats available for this route!";
+        return;
+    } else {
+        qDebug() << "Seat count decreased for routeId:" << routeId;
+    }
+
+
+    QSqlQuery fetchQuery(db);
+    fetchQuery.prepare("SELECT seats FROM routes1_view WHERE route_id = :routeId");
+    fetchQuery.bindValue(":routeId", routeId);
+
+    if (fetchQuery.exec() && fetchQuery.next()) {
+        int updatedSeats = fetchQuery.value(0).toInt();
+        emit seatsUpdated(routeId, updatedSeats); // Inform UI
+        qDebug() << "Updated seats: " << updatedSeats;
+    }
+
+    if (!m_reservationHandler) {
+        m_reservationHandler = new ReservationHandler(nullptr);
+    }
+
+    // Let ReservationHandler handle everything
+    m_reservationHandler->openReservation(
+        routeId, passengerName, passengerEmail, passengerPhone, paymentMethod);
+}
+
 
 QQuickView* PaymentHandler::view() const
 {

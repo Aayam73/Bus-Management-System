@@ -8,6 +8,11 @@ Rectangle {
     width: Screen.width
     height: Screen.height
 
+    property string routeId: ""
+    property string fullName: ""
+    property string phoneNumber: ""
+    property string seatNumber: ""
+    property string method: ""
     property bool isEsewa: false
     property bool showEsewaMpin: false
     property bool showKhaltiMpin: false
@@ -202,6 +207,27 @@ Rectangle {
             }
 
 
+            RowLayout {
+                Layout.fillWidth: true
+                spacing: 40
+                Layout.alignment: Qt.AlignHCenter
+
+                RadioButton {
+                    id: esewaBtn
+                    text: "eSewa"
+                    checked: isEsewa
+                    onClicked: isEsewa = true
+                }
+
+                RadioButton {
+                    id: khaltiBtn
+                    text: "Khalti"
+                    checked: !isEsewa
+                    onClicked: isEsewa = false
+                }
+            }
+
+
             Loader {
                 id: paymentForm
                 sourceComponent: isEsewa ? esewaForm : khaltiForm
@@ -247,14 +273,15 @@ Rectangle {
                 onClicked: {
                     if (!paymentForm.item) return;
                     const mpin = isEsewa ? paymentForm.item.esewaMpin.text : paymentForm.item.khaltiMpin.text;
-
-                    paymentHandler.processPayment(
-                        nameField.text,
-                        emailField.text,
-                        phoneField.text,
-                        isEsewa,
-                        mpin
-                    );
+                    console.log("PayNow clicked with routeId:", paymentHandler.routeId,
+                                    "name:", nameField.text,
+                                    "email:", emailField.text,
+                                    "phone:", phoneField.text);
+                    paymentHandler.payNowClicked(paymentHandler.routeId,
+                                                 nameField.text,
+                                                 emailField.text,
+                                                 phoneField.text,
+                                                 isEsewa ? "eSewa" : "Khalti")
                 }
 
                 Behavior on scale { NumberAnimation { duration: 160; easing.type: Easing.OutQuad } }
