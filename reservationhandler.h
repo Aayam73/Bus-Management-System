@@ -63,6 +63,7 @@ signals:
     void methodChanged(const QString &);
 
 
+
 private:
     QSqlDatabase db;
     QQuickView *m_view = nullptr;

@@ -277,6 +277,7 @@ bool ReservationHandler::connectDatabase()
             method TEXT,
             from_district TEXT,
             to_district TEXT,
+            travel_date,
             reservation_date TEXT,
             seat TEXT,
             amount REAL,
@@ -322,7 +323,7 @@ void ReservationHandler::setRouteId(const QString &routeId)
     // Fetch route details from the database
     QSqlQuery query(db);
     query.prepare(R"(
-        SELECT from_district, to_district, departure_time, arrival_time,
+        SELECT from_district, to_district, date, departure_time, arrival_time,
                price, bus_no, driver_info, drivers_cellno, seats
         FROM routes1_view WHERE route_id = ?
     )");
@@ -331,22 +332,22 @@ void ReservationHandler::setRouteId(const QString &routeId)
     if (query.exec() && query.next()) {
         QString from = query.value(0).toString();
         QString to = query.value(1).toString();
-        QString departure = query.value(2).toString();
-        QString arrival = query.value(3).toString();
-        QString priceStr = query.value(4).toString();
+        QDate date = QDate::fromString(query.value(2).toString(), "yyyy-MM-dd");
+        QString departure = query.value(3).toString();
+        QString arrival = query.value(4).toString();
+        QString priceStr = query.value(5).toString();
         double price = priceStr.toDouble();
-        QString bus = query.value(5).toString();
-        QString driver = query.value(6).toString();
-        QString phone = query.value(7).toString();
-        QString seats = query.value(8).toString();
+        QString bus = query.value(6).toString();
+        QString driver = query.value(7).toString();
+        QString phone = query.value(8).toString();
+        QString seats = query.value(9).toString();
 
         // Push data into QML
         if (m_view && m_view->rootObject()) {
             QQuickItem *root = m_view->rootObject();
             root->setProperty("fromLocation", from);
-            qDebug() << "C++ Setting QML fromLocation to:" << from;
             root->setProperty("toLocation", to);
-            qDebug() << "C++ Setting QML toLocation to:" << to;
+            root->setProperty("date", date);
             root->setProperty("departureTime", departure);
             root->setProperty("arrivalTime", arrival);
             root->setProperty("ticketPrice", price);
@@ -383,7 +384,7 @@ bool ReservationHandler::saveReservation(
     QSqlQuery fetchQuery(db);
     fetchQuery.prepare(R"(
         SELECT from_district, to_district, departure_time, arrival_time,
-               price, bus_no, driver_info, driver_cellno, seats
+               price, bus_no, driver_info, driver_cellno, seats, date
         FROM routes1_view
         WHERE route_id = ?
     )");
@@ -405,6 +406,7 @@ bool ReservationHandler::saveReservation(
     QString driverInfo     = fetchQuery.value(6).toString();
     QString contactPhoneBus= fetchQuery.value(7).toString();
     QString seats          = fetchQuery.value(8).toString();
+    QDate travelDate = QDate::fromString(fetchQuery.value(9).toString(), "yyyy-MM-dd");
 
     // 2. Insert reservation into DB
     QSqlQuery query(db);
@@ -412,7 +414,7 @@ bool ReservationHandler::saveReservation(
         INSERT INTO reservations (
             name, email, phone, method, from_district, to_district, reservation_date,
             seat, amount, user_id, departure_time, arrival_time,
-            bus_no, driver_info, contact_phone_bus, route_id)
+            bus_no, driver_info, contact_phone_bus, route_id, travel_date)
         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     )");
 
@@ -432,6 +434,7 @@ bool ReservationHandler::saveReservation(
     query.addBindValue(driverInfo);
     query.addBindValue(contactPhoneBus);
     query.addBindValue(routeId);
+    query.addBindValue(travelDate.toString(Qt::ISODate));
 
     if (!query.exec()) {
         qDebug() << "Insert failed:" << query.lastError().text();

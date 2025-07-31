@@ -19,12 +19,13 @@ public:
     ~HomeWindow();
 
     QAbstractListModel* districtModel() const { return m_districtModel; }
-    Q_INVOKABLE void searchRoute(const QString &from, const QString &to);
+    Q_INVOKABLE void searchRoute(const QString &from, const QString &to, const QString &date);
     Q_INVOKABLE QStringList getDistricts() const;
     Q_INVOKABLE void openBookingPage(
         const QString &routeId,
         const QString &from,
         const QString &to,
+        const QString &date,
         const QString &departure,
         const QString &arrival,
         const QString &price,
@@ -50,6 +51,7 @@ private:
     BookingWindow* m_bookingWindow = nullptr;
     QString m_lastFromDistrict;
     QString m_lastToDistrict;
+    QString m_lastDate;
 };
 
 #endif // HOMEWINDOW_H

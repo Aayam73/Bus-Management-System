@@ -85,7 +85,7 @@ int main(int argc, char *argv[])
 {
     QApplication app(argc, argv);
     connectToDatabase();
-
+        qDebug() << "Qt version:" << QT_VERSION_STR;
     QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
     QQuickStyle::setStyle("Fusion");  // or "Basic", "Material"
 

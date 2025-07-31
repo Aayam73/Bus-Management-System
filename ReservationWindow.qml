@@ -21,7 +21,7 @@ Rectangle {
     property string busNo: ""
     property string driverInfo: ""
     property string contactPhone: ""
-    property date travelDate: new Date()
+    property date date: new Date()
     property date reservationDate: new Date()
     property string routeId: ""
     property bool isEsewa: false
@@ -57,7 +57,7 @@ Rectangle {
         function onBusNoChanged() { console.log("Updated:", busNo) }
         function onDriverInfoChanged() { console.log("Updated:", driverInfo) }
         function onContactPhoneChanged() { console.log("Updated:", contactPhone) }
-        function onTravelDateChanged() { console.log("Updated:", travelDate) }
+        function onDateChanged() { console.log("Updated:", date) }
         function onReservationDateChanged() { console.log("Updated:", reservationDate) }
         function onRouteIdChanged() { console.log("Updated:", routeId) }
     }
@@ -104,6 +104,21 @@ Rectangle {
                 anchors.right: parent.right
                 anchors.top: parent.top
                 anchors.margins: 16
+
+                RowLayout {
+                                id: logoRow
+                                Layout.fillWidth: true
+                                spacing: 10
+                                Layout.alignment: Qt.AlignHCenter
+
+                                Text {
+                                    text: qsTr("Hamro Bus Sewa")
+                                    font.bold: true
+                                    font.pixelSize: 20
+                                    color: "#2c3e50"
+                                    verticalAlignment: Text.AlignVCenter
+                                }
+                            }
 
                 // Passenger Details
                 GroupBox {
@@ -156,7 +171,7 @@ Rectangle {
 
                     Component.onCompleted: {
                         // Generate QR using reservation data
-                        var qrData = fullName + "|" + fromLocation + " → " + toLocation + "|" + travelDate
+                        var qrData = fullName + "|" + fromLocation + " → " + toLocation + "|" + date
                         var path = reservationHandler.generateQRCode(qrData)
                         qrImage.source = "file:///" + path
                     }
@@ -209,7 +224,7 @@ Rectangle {
                         }
 
                         Label { text: qsTr("Travel Date:"); font.bold: true; color: "black" }
-                        Label { text: Qt.formatDate(travelDate, "dd MMM yyyy"); font.pixelSize: 15; color: "#333" }
+                        Label { text: Qt.formatDate(date, "dd MMM yyyy"); font.pixelSize: 15; color: "#333" }
 
                         Label { text: qsTr("Reservation Made On:"); font.bold: true; color: "black" }
                         Label { text: Qt.formatDateTime(reservationDate, "dd MMM yyyy hh:mm"); font.pixelSize: 15; color: "#333" }
@@ -267,7 +282,7 @@ Rectangle {
                     reservationHandler.exportToPDF(
                         fullName,
                         fromLocation + " → " + toLocation,
-                        Qt.formatDate(travelDate, "dd MMM yyyy"),
+                        Qt.formatDate(date, "dd MMM yyyy"),
                         phoneNumber,
                         departureTime,
                         arrivalTime,

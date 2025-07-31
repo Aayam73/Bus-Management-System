@@ -170,33 +170,143 @@ Rectangle {
             }
     }
 
-    Button {
-        id: searchButton
-        text: "SEARCH"
-        anchors.top: searchRow.bottom
-        anchors.topMargin: 15
-        anchors.horizontalCenter: parent.horizontalCenter
-        width: 100
-        height: 40
-        font.bold: true
-        background: Rectangle {
-            color: "purple"
-            radius: 10
+    RowLayout {
+            id: dateSelectionLayout
+            spacing: 10
+            anchors.top: searchRow.bottom // Correctly anchor to the previous layout
+            anchors.topMargin: 10
+            anchors.horizontalCenter: parent.horizontalCenter
+
+            property int currentDay: parseInt(Qt.formatDate(new Date(), "d"))
+            property int currentMonth: parseInt(Qt.formatDate(new Date(), "M")) - 1
+            property int currentYear: parseInt(Qt.formatDate(new Date(), "yyyy"))
+            property int daysInMonth: 31
+            property string selectedDate: {
+                // Only compute if everything is valid
+                if (yearComboBox.currentIndex < 0 ||
+                    monthComboBox.currentIndex < 0 ||
+                    dayComboBox.currentIndex < 0 ||
+                    dayComboBox.currentIndex >= dayModel.count)
+                    return "";
+
+                var year = yearComboBox.model[yearComboBox.currentIndex];
+                var month = monthComboBox.currentIndex + 1;
+                var day = dayModel.get(dayComboBox.currentIndex).value;
+
+                function pad(n) { return n < 10 ? "0" + n : n }
+                return year + "-" + pad(month) + "-" + pad(day);
+            }
+
+            ListModel {
+                id: dayModel
+            }
+
+            ComboBox {
+                id: dayComboBox
+                width: 60
+                model: dayModel
+                textRole: "text"
+                delegate: ItemDelegate { text: model.text }
+            }
+
+            ComboBox {
+                id: monthComboBox
+                width: 90
+                model: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
+                currentIndex: dateSelectionLayout.currentMonth
+                onCurrentIndexChanged: dateSelectionLayout.updateDays()
+            }
+
+            ComboBox {
+                id: yearComboBox
+                width: 80
+                model: [dateSelectionLayout.currentYear]
+                currentIndex: model.indexOf(dateSelectionLayout.currentYear)
+                onCurrentIndexChanged: dateSelectionLayout.updateDays()
+            }
+
+            function updateDays() {
+                var year = yearComboBox.currentIndex >= 0 ? yearComboBox.model[yearComboBox.currentIndex] : dateSelectionLayout.currentYear;
+                var month = monthComboBox.currentIndex >= 0 ? monthComboBox.currentIndex : dateSelectionLayout.currentMonth;
+                dateSelectionLayout.daysInMonth = getDaysInMonth(year, month);
+                dayModel.clear();
+                for (var i = 1; i <= dateSelectionLayout.daysInMonth; ++i) {
+                    dayModel.append({"text": i.toString(), "value": i});
+                }
+                if (dayComboBox.currentIndex >= dateSelectionLayout.daysInMonth || dayComboBox.currentIndex < 0) {
+                    dayComboBox.currentIndex = dateSelectionLayout.daysInMonth - 1;
+                }
+            }
+
+            function getDaysInMonth(year, month) {
+                if (month === 1) { // February
+                    if ((year % 4 === 0 && year % 100 !== 0) || (year % 400 === 0)) return 29;
+                    return 28;
+                }
+                if ([3, 5, 8, 10].indexOf(month) !== -1) return 30;
+                return 31;
+            }
+
+            Component.onCompleted: {
+                // Fill days immediately
+                updateDays();
+
+                // Set default indexes so they are not -1
+                if (yearComboBox.currentIndex < 0)
+                    yearComboBox.currentIndex = 0;
+
+                if (monthComboBox.currentIndex < 0)
+                    monthComboBox.currentIndex = currentMonth;
+
+                if (dayComboBox.currentIndex < 0)
+                    dayComboBox.currentIndex = currentDay - 1;
+
+                console.log("Date initialized:", selectedDate);
+            }
         }
-        onClicked: {
-                       console.log("Search button clicked")
-                       console.log("From:", fromComboBox.currentText)
-                       console.log("To:", toComboBox.currentText)
 
-                       if (fromComboBox.currentText === "" || toComboBox.currentText === "") {
-                           console.log("Please enter both FROM and TO fields.")
-                           return
-                       }
+        Button {
+            id: searchButton
+            text: "SEARCH"
+            anchors.top: dateSelectionLayout.bottom // Correctly anchored to the date layout
+            anchors.topMargin: 15
+            anchors.horizontalCenter: parent.horizontalCenter
+            width: 100
+            height: 40
+            font.bold: true
+            background: Rectangle {
+                color: "purple"
+                radius: 10
+                opacity: searchButton.enabled ? 1.0 : 0.5
+            }
 
-                       homeWindow.searchRoute(fromComboBox.currentText, toComboBox.currentText)
-                   }
+            onClicked: {
+                console.log(" SEARCH button clicked");
 
-    }
+                // Check if homeWindow is set
+                if (!homeWindow) {
+                    console.log(" homeWindow is null or not set yet, cannot call searchRoute!");
+                    return;
+                }
+
+                // Collect values
+                var fromText = fromComboBox.currentText.trim();
+                var toText = toComboBox.currentText.trim();
+                var dateStr = dateSelectionLayout.selectedDate;
+
+                // Validate
+                if (fromText === "" || toText === "" || dateStr === "") {
+                    console.log(" ERROR: One or more fields are empty. FROM:", fromText, "TO:", toText, "DATE:", dateStr);
+                    return;
+                }
+
+                // Debug log values
+                console.log("From:", fromText, "To:", toText, "Date:", dateStr);
+
+                // Call C++ function
+                homeWindow.searchRoute(fromText, toText, dateStr);
+            }
+        }
 
 
     Rectangle {
@@ -228,6 +338,7 @@ Rectangle {
                 Rectangle { width: 60; height: 30; color: "#9575cd"; Text { anchors.centerIn: parent; text: "Route ID"; font.bold: true; color: "white" } }
                 Rectangle { width: 80; height: 30; color: "#9575cd"; Text { anchors.centerIn: parent; text: "From"; font.bold: true; color: "white" } }
                 Rectangle { width: 80; height: 30; color: "#9575cd"; Text { anchors.centerIn: parent; text: "To"; font.bold: true; color: "white" } }
+                Rectangle { width: 80; height: 30; color: "#9575cd"; Text { anchors.centerIn: parent; text: "Date"; font.bold: true; color: "white"}}
                 Rectangle { width: 80; height: 30; color: "#9575cd"; Text { anchors.centerIn: parent; text: "Depart"; font.bold: true; color: "white" } }
                 Rectangle { width: 80; height: 30; color: "#9575cd"; Text { anchors.centerIn: parent; text: "Arrive"; font.bold: true; color: "white" } }
                 Rectangle { width: 60; height: 30; color: "#9575cd"; Text { anchors.centerIn: parent; text: "Price"; font.bold: true; color: "white" } }
@@ -277,6 +388,7 @@ Rectangle {
                             Rectangle { width: 60; height: parent.height; color: "black"; Text { anchors.centerIn: parent; text: model.route_id; color: "white" } }
                             Rectangle { width: 80; height: parent.height; color: "#ede7f6"; Text { anchors.centerIn: parent; text: model.from_district; color: "#333" } }
                             Rectangle { width: 80; height: parent.height; color: "#ede7f6"; Text { anchors.centerIn: parent; text: model.to_district; color: "#333" } }
+                            Rectangle { width: 80; height: parent.height; color: "#ede7f6"; Text { anchors.centerIn: parent; text: model.date; color: "#333" } }
                             Rectangle { width: 80; height: parent.height; color: "#ede7f6"; Text { anchors.centerIn: parent; text: model.departure_time; color: "#333" } }
                             Rectangle { width: 80; height: parent.height; color: "#ede7f6"; Text { anchors.centerIn: parent; text: model.arrival_time; color: "#333" } }
                             Rectangle { width: 60; height: parent.height; color: "#ede7f6"; Text { anchors.centerIn: parent; text: model.price; color: "#333" } }
@@ -294,6 +406,7 @@ Rectangle {
                                                                     model.route_id,
                                                                     model.from_district,
                                                                     model.to_district,
+                                                                    model.date,
                                                                     model.departure_time,
                                                                     model.arrival_time,
                                                                     model.price,

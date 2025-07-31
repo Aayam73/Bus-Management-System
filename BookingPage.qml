@@ -18,6 +18,7 @@ Rectangle {
     property string routeId: ""
     property string fromLocation: ""
     property string toLocation: ""
+    property string date: ""
     property string departureTime: ""
     property string arrivalTime: ""
     property real ticketPrice: 0
@@ -143,6 +144,7 @@ Rectangle {
                         DetailRow { icon: "🎫"; label: "Route ID"; value: bookingWindow.routeId; Layout.fillWidth: true }
                         DetailRow { icon: "📍"; label: "From"; value: bookingWindow.fromLocation; Layout.fillWidth: true }
                         DetailRow { icon: "📍"; label: "To"; value: bookingWindow.toLocation; Layout.fillWidth: true }
+                        DetailRow { icon: "📅"; label: "Date"; value: bookingWindow.date; Layout.fillWidth: true}
                         DetailRow { icon: "🕒"; label: "Journey Time"; value: bookingWindow.departureTime + " → " + bookingWindow.arrivalTime; Layout.fillWidth: true }
                         DetailRow { icon: "💰"; label: "Ticket Price"; value: "Rs. " + bookingWindow.ticketPrice; Layout.fillWidth: true }
                         DetailRow { icon: "🚌"; label: "Bus Number"; value: bookingWindow.busNo; Layout.fillWidth: true }

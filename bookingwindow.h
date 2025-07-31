@@ -15,6 +15,7 @@ class BookingWindow : public QObject
     Q_PROPERTY(QString routeId READ routeId NOTIFY routeIdChanged)
     Q_PROPERTY(QString fromLocation READ fromLocation NOTIFY fromLocationChanged)
     Q_PROPERTY(QString toLocation READ toLocation NOTIFY toLocationChanged)
+    Q_PROPERTY(QString date READ date NOTIFY travelDateChanged)
     Q_PROPERTY(QString departureTime READ departureTime NOTIFY departureTimeChanged)
     Q_PROPERTY(QString arrivalTime READ arrivalTime NOTIFY arrivalTimeChanged)
     Q_PROPERTY(QString ticketPrice READ ticketPrice NOTIFY ticketPriceChanged)
@@ -32,6 +33,7 @@ public:
     QString routeId() const { return m_routeId; }
     QString fromLocation() const { return m_fromLocation; }
     QString toLocation() const { return m_toLocation; }
+    QString date() const { return m_date; }
     QString departureTime() const { return m_departureTime; }
     QString arrivalTime() const { return m_arrivalTime; }
     QString ticketPrice() const { return m_ticketPrice; }
@@ -42,7 +44,7 @@ public:
 
     // Method to set all route data at once
     void setRouteData(const QString &routeId, const QString &from,
-                      const QString &to, const QString &departure,
+                      const QString &to, const QString &date ,const QString &departure,
                       const QString &arrival, const QString &price,
                       const QString &bus, const QString &driver,
                       const QString &phone, const QString &seats);
@@ -83,6 +85,7 @@ private:
     QString m_routeId;
     QString m_fromLocation;
     QString m_toLocation;
+    QString m_date;
     QString m_departureTime;
     QString m_arrivalTime;
     QString m_ticketPrice;

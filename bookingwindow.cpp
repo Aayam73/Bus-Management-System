@@ -33,13 +33,16 @@ BookingWindow::~BookingWindow()
 }
 
 void BookingWindow::setRouteData(const QString &routeId, const QString &from,
-                                 const QString &to, const QString &departure,
+                                 const QString &to,const QString &date, const QString &departure,
                                  const QString &arrival, const QString &price,
                                  const QString &bus, const QString &driver,
                                  const QString &phone, const QString &seats) {
     if (m_routeId != routeId) { m_routeId = routeId; emit routeIdChanged(routeId); }
     if (m_fromLocation != from) { m_fromLocation = from; emit fromLocationChanged(from); }
     if (m_toLocation != to) { m_toLocation = to; emit toLocationChanged(to); }
+    QDate parsedDate = QDate::fromString(date, "yyyy-MM-dd");
+    QString newDateStr = parsedDate.toString("yyyy-MM-dd");
+    if (m_date != newDateStr) { m_date = newDateStr; emit travelDateChanged(parsedDate);}
     if (m_departureTime != departure) { m_departureTime = departure; emit departureTimeChanged(departure); }
     if (m_arrivalTime != arrival) { m_arrivalTime = arrival; emit arrivalTimeChanged(arrival); }
     if (m_ticketPrice != price) { m_ticketPrice = price; emit ticketPriceChanged(price); }
