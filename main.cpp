@@ -6,6 +6,7 @@
 #include "signupwindow.h"
 #include "loginwindow.h"
 #include "reservationhandler.h"
+#include "accountwindow.h"
 #include <QMessageBox>
 #include <QSqlDatabase>
 #include <QSqlError>
@@ -19,11 +20,11 @@
 #include <QQuickStyle>
 #include <QApplication>
 #include <QStandardPaths>
-#include <QFile> // Added for QFile::copy and QFile::exists
+#include <QFile>
 
 void connectToDatabase() {
     QString dataDir = QStandardPaths::writableLocation(QStandardPaths::AppDataLocation);
-    QDir().mkpath(dataDir); // Ensure the directory exists
+    QDir().mkpath(dataDir);
     QString dbPath = dataDir + "/bus_database.db";
     qDebug() << "Trying to open database at:" << dbPath;
 
@@ -32,10 +33,8 @@ void connectToDatabase() {
         qDebug() << "Database not found at" << dbPath << ". Copying from resources...";
         if (QFile::copy(":/assets/database/bus_database.db", dbPath)) {
             QFile dbFile(dbPath);
-            // Set permissions to ensure the application can read and write to the copied database file
             if (!dbFile.setPermissions(QFileDevice::ReadOwner | QFileDevice::WriteOwner)) {
                 qWarning() << "Failed to set write permissions on database file:" << dbPath;
-                // This might not be a fatal error, but it's good to log
             }
             qDebug() << "Database copied successfully to:" << dbPath;
         } else {
@@ -72,8 +71,6 @@ void connectToDatabase() {
     if (!db.open()) {
         qWarning() << "Database open error for new connection 'main':" << db.lastError().text();
         QMessageBox::critical(nullptr, "Database Error", "Failed to open database: " + db.lastError().text());
-        // Consider exiting the application here as the database is crucial
-        // QCoreApplication::exit(-1);
     } else {
         qDebug() << "New database connection 'main' opened successfully!";
     }
@@ -87,7 +84,7 @@ int main(int argc, char *argv[])
     connectToDatabase();
         qDebug() << "Qt version:" << QT_VERSION_STR;
     QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
-    QQuickStyle::setStyle("Fusion");  // or "Basic", "Material"
+    QQuickStyle::setStyle("Fusion");
 
     QQmlApplicationEngine engine;
 
@@ -95,6 +92,7 @@ int main(int argc, char *argv[])
     SignupWindow signup;
     LoginWindow login;
     HomeWindow homeWindow;
+    AccountWindow accountWindow;
     BookingWindow bookingWindow;
     PaymentHandler paymentHandler;
     ReservationHandler reservationHandler;
@@ -102,6 +100,7 @@ int main(int argc, char *argv[])
     engine.rootContext()->setContextProperty("signupWindow", &signup);
     engine.rootContext()->setContextProperty("loginWindow", &login);
     engine.rootContext()->setContextProperty("homeWindow", &homeWindow);
+    engine.rootContext()->setContextProperty("accountWindow", &accountWindow);
     engine.rootContext()->setContextProperty("bookingWindow", &bookingWindow);
     engine.rootContext()->setContextProperty("paymentHandler", &paymentHandler);
     engine.rootContext()->setContextProperty("reservationHandler", &reservationHandler);

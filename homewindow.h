@@ -2,6 +2,7 @@
 #define HOMEWINDOW_H
 
 #include "bookingwindow.h"
+#include "accountwindow.h"
 #include <QObject>
 #include <QQuickView>
 #include <QStringListModel>
@@ -47,6 +48,7 @@ signals:
 private:
     QStringListModel* m_districtModel = nullptr;
     QQuickView *m_view = nullptr;
+    AccountWindow *m_accountWindow = nullptr;
     QVariantList m_routes;
     BookingWindow* m_bookingWindow = nullptr;
     QString m_lastFromDistrict;

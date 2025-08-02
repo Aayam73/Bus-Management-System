@@ -1,5 +1,6 @@
 #include "homewindow.h"
 #include "bookingwindow.h"
+#include "accountwindow.h"
 #include <QSqlQuery>
 #include <QSqlError>
 #include <QMessageBox>
@@ -7,6 +8,7 @@
 #include <QDebug>
 #include <QCompleter>
 #include <QQmlContext>
+#include <QQuickItem>
 
 HomeWindow::HomeWindow(QObject *parent)
     : QObject(parent), m_districtModel(new QStringListModel(this))
@@ -124,15 +126,15 @@ void HomeWindow::openBookingPage(
             this, &HomeWindow::onSeatsUpdated);
 
     m_bookingWindow->setRouteData(routeId, from, to, date, departure, arrival, price, bus, driver, phone, seats);
-    if (m_bookingWindow->view()) { // Add a getter to BookingWindow for m_view if needed
+    if (m_bookingWindow->view()) {
         m_bookingWindow->view()->show();
     }
 
     emit bookingPageOpened();
 }
 
+
 void HomeWindow::refreshCurrentSearch() {
-    // You need to remember last search criteria (from & to districts)
     searchRoute(m_lastFromDistrict, m_lastToDistrict, m_lastDate);
 }
 

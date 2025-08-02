@@ -160,7 +160,6 @@ void PaymentHandler::payNowClicked(
 
     // Update only if seats > 0
     query.prepare("UPDATE routes1 SET seats = seats - 1 WHERE route_id = :routeId AND seats > 0");
-
     query.bindValue(":routeId", routeId);
 
     if (!query.exec()) {

@@ -19,6 +19,7 @@ Rectangle {
                 console.log("homeWindow:", loginWindow.homeWindow);
                 console.log("districtModel:", loginWindow.homeWindow ? loginWindow.homeWindow.districtModel : "no homeWindow");
                 stackView.replace("qrc:/Qml/HomePage.qml", {
+                                      username: loginWindow.username,
                                       homeWindow: homeWindow,
                                       districtModel: homeWindow ? homeWindow.districtModel : null
                                   });

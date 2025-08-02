@@ -13,8 +13,9 @@ Rectangle {
         GradientStop { position: 1.0; color: "#e0c3fc" }
     }
 
-    property var homeWindow
     property var districtModel
+    property string username: ""
+    property var homeWindow
     property StackView stackView: StackView.view
 
     ListModel {
@@ -66,13 +67,39 @@ Rectangle {
     }
 
     Text {
-        text: "Hamro Bus Sewa"
+        text: "Welcome, " + username
         font.bold: true
         font.pixelSize: 22
         anchors.top: parent.top
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.topMargin: 20
         color: "#333"
+    }
+
+    Button {
+        id: accountButton
+        text: "Account"
+        anchors.top: parent.top
+        anchors.right: parent.right
+        anchors.topMargin: 15
+        anchors.rightMargin: 15
+        width: 100
+        height: 40
+        font.bold: true
+        background: Rectangle {
+            color: "#7e57c2"
+            radius: 10
+        }
+        onClicked: {
+               console.log("DEBUG: Account button clicked")
+               if (stackView) {
+                   stackView.push("qrc:/Qml/AccountPage.qml", {
+                       username: username
+                   })
+               } else {
+                   console.log("ERROR: StackView is not set!")
+               }
+           }
     }
 
     RowLayout {

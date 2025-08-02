@@ -11,13 +11,13 @@
 LoginWindow::LoginWindow(QObject *parent)
     : QObject(parent)
 {
+    m_homeWindow = new HomeWindow(this);
     m_view = new QQuickView();
     m_view->setResizeMode(QQuickView::SizeRootObjectToView);
     m_view->rootContext()->setContextProperty("loginWindow", this);
     m_view->rootContext()->setContextProperty("homeWindow", m_homeWindow);
     m_view->setSource(QUrl("qrc:/Qml/LoginPage.qml"));
 
-    m_homeWindow = new HomeWindow(this);
 }
 
 LoginWindow::~LoginWindow()
@@ -53,13 +53,14 @@ void LoginWindow::handleLogin(const QString &username, const QString &password)
             qDebug() << "Could not fetch user ID:" << query.lastError().text();
             currentUserId = -1;
         }
+        setUsername(username);
+        qDebug() << "Login success, userId:" << currentUserId;
+        emit loginSuccessWithUserId(currentUserId);
         emit loginSuccess();
         if (m_view) {
             m_view->hide();
             qDebug() << "Login view is:" << m_view;
         }
-
-
     }
 
      else {
