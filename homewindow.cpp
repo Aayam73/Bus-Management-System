@@ -10,8 +10,10 @@
 #include <QQmlContext>
 #include <QQuickItem>
 
-HomeWindow::HomeWindow(QObject *parent)
-    : QObject(parent), m_districtModel(new QStringListModel(this))
+HomeWindow::HomeWindow(SessionManager* sessionManager, QObject *parent)
+    : QObject(parent),
+    m_sessionManager(sessionManager),
+    m_districtModel(new QStringListModel(this))
 {
     QStringList districts = getDistricts();
     m_districtModel->setStringList(districts);
@@ -119,7 +121,7 @@ void HomeWindow::openBookingPage(
     const QString &phone,
     const QString &seats) {
     if (!m_bookingWindow) {
-        m_bookingWindow = new BookingWindow(this);  // Create once and reuse
+        m_bookingWindow = new BookingWindow(m_sessionManager, this);
     }
 
     connect(m_bookingWindow->paymentHandler(), &PaymentHandler::seatsUpdated,

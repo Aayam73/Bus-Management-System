@@ -18,8 +18,7 @@ public:
                                      QString passengerEmail,
                                      QString passengerPhone,
                                      QString method,
-                                     QString routeId,
-                                     int currentUserId);
+                                     QString routeId, int userId);
     Q_INVOKABLE void cleanOldReservations();
     void setRouteId(const QString &routeId);
     Q_INVOKABLE void openReservation(

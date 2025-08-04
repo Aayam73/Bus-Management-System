@@ -7,11 +7,10 @@
 #include <QQmlComponent>
 #include <QQmlEngine>
 
-
-LoginWindow::LoginWindow(QObject *parent)
-    : QObject(parent)
+LoginWindow::LoginWindow(SessionManager* sessionMgr, QObject *parent)
+    : QObject(parent), sessionManager(sessionMgr)
 {
-    m_homeWindow = new HomeWindow(this);
+    m_homeWindow = new HomeWindow(sessionMgr);
     m_view = new QQuickView();
     m_view->setResizeMode(QQuickView::SizeRootObjectToView);
     m_view->rootContext()->setContextProperty("loginWindow", this);
@@ -47,15 +46,18 @@ void LoginWindow::handleLogin(const QString &username, const QString &password)
         query.bindValue(":username", username);
 
         if (query.exec() && query.next()) {
-            currentUserId = query.value(0).toInt();   // set global user ID
-            qDebug() << "Logged-in user ID is:" << currentUserId;
+            int userId = query.value(0).toInt();
+            sessionManager->setUserId(userId);
+            sessionManager->setUsername(username);
+            qDebug() << "Logged-in user ID is:" << userId;
         } else {
             qDebug() << "Could not fetch user ID:" << query.lastError().text();
-            currentUserId = -1;
+            sessionManager->setUserId(-1);
         }
         setUsername(username);
-        qDebug() << "Login success, userId:" << currentUserId;
-        emit loginSuccessWithUserId(currentUserId);
+        int userId = sessionManager->userId();
+        qDebug() << "Login success, userId:" << userId;
+        emit loginSuccessWithUserId(userId);
         emit loginSuccess();
         if (m_view) {
             m_view->hide();

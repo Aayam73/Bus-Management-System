@@ -13,7 +13,6 @@ public:
     ~SignupWindow();
 
     Q_INVOKABLE void handleSignup(const QString &username, const QString &password, const QString &confirm);
-    Q_INVOKABLE void goToLogin();
     void show();
 
 signals:

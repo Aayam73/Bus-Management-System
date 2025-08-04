@@ -24,6 +24,7 @@ SOURCES += \
     loginwindow.cpp \
     paymenthandler.cpp \
     reservationhandler.cpp \
+    sessionmanager.cpp \
     signupwindow.cpp \
     startwindow.cpp \
     qrcodegen.cpp
@@ -36,6 +37,7 @@ HEADERS += \
     loginwindow.h \
     paymenthandler.h \
     reservationhandler.h \
+    sessionmanager.h \
     signupwindow.h \
     startwindow.h \
     qrcodegen.hpp

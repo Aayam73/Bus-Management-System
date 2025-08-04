@@ -9,7 +9,8 @@
 #include <QSqlError>
 
 
-PaymentHandler::PaymentHandler(QObject *parent) : QObject(parent)
+PaymentHandler::PaymentHandler(SessionManager* sessionManager, QObject *parent)
+    : QObject(parent), m_sessionManager(sessionManager)
 {
     m_view = new QQuickView(nullptr);
     m_view->rootContext()->setContextProperty("paymentHandler",this);
@@ -144,6 +145,8 @@ void PaymentHandler::payNowClicked(
     const QString &paymentMethod)
 {
     // Hide payment window
+
+    int userId = m_sessionManager->userId();
     if (m_view) m_view->hide();
 
     // Decrease seat count by 1, only if seats > 0
@@ -188,7 +191,10 @@ void PaymentHandler::payNowClicked(
 
     // Let ReservationHandler handle everything
     m_reservationHandler->openReservation(
-        routeId, passengerName, passengerEmail, passengerPhone, paymentMethod);
+    routeId, passengerName, passengerEmail, passengerPhone, paymentMethod);
+
+    m_reservationHandler->saveReservation(
+    passengerName, passengerEmail, passengerPhone, paymentMethod, routeId, userId);
 }
 
 

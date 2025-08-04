@@ -12,10 +12,9 @@
 #include <QQuickView>
 #include <QQmlContext>
 #include <QQuickItem>
+#include <QTimer>
 
 using namespace qrcodegen;
-
-int currentUserId = -1;
 
 ReservationHandler::ReservationHandler(QObject *parent)
     : QObject(parent)
@@ -31,15 +30,20 @@ ReservationHandler::ReservationHandler(QObject *parent)
     qDebug() << "DB file path:" << db.databaseName();
     qDebug() << "DB is open?" << db.isOpen();
 
-
     QSqlQuery check(db);
     check.exec("PRAGMA table_info(reservations)");
     while (check.next()) {
         qDebug() << "Column:" << check.value(1).toString();
     }
+    if (!connectDatabase()) {
+        qWarning() << "Failed to connect DB!";
+    }
+    QTimer *cleanupTimer = new QTimer(this);
+    connect(cleanupTimer, &QTimer::timeout, this, &ReservationHandler::cleanOldReservations);
+    cleanupTimer->start(24 * 60 * 60 * 1000);
+
 
     qDebug() << "Checking db in cleanOldReservations:" << db.connectionName() << db.isOpen();
-    cleanOldReservations();
 
     m_view = new QQuickView();
     m_view->rootContext()->setContextProperty("reservationHandler", this);
@@ -95,30 +99,32 @@ void ReservationHandler::exportToPDF(const QString &fullName,
     QDir().mkpath(downloadsDir);
     QString fileName = downloadsDir + QString("/Ticket_%1.pdf").arg(QDateTime::currentDateTime().toString("yyyyMMdd_hhmmss"));
 
+    // For laptop/desktop A4 landscape (good for screenshots like yours)
     QPdfWriter writer(fileName);
     writer.setPageSize(QPageSize(QPageSize::A4));
-    writer.setPageMargins(QMarginsF(50, 50, 50, 50));
+    writer.setPageOrientation(QPageLayout::Landscape);
+    writer.setPageMargins(QMarginsF(70, 60, 70, 60)); // Wider margins for clear layout
 
     QPainter painter(&writer);
     painter.setPen(Qt::black);
 
-    int leftMargin = 50;
-    int valueIndent = 180; // Distance from leftMargin where values start
-    int y = 60;
-    int lineHeight = 30;
-    int sectionSpacing = 50;
+    int leftMargin = 100;
+    int valueIndent = 260;    // More space between label and value
+    int y = 120;              // Start lower for header
+    int lineHeight = 40;      // Large gap between each line
+    int sectionSpacing = 60;  // Bigger gap between sections
 
     // Draw Title
-    painter.setFont(QFont("Helvetica", 20, QFont::Bold));
-    painter.drawText(QRect(leftMargin, y, writer.width() - 2 * leftMargin, 40), Qt::AlignCenter, "Bus Ticket - Reservation Confirmation");
-    y += lineHeight + sectionSpacing;
+    painter.setFont(QFont("Helvetica", 26, QFont::Bold));
+    painter.drawText(QRect(leftMargin, y, writer.width() - 2 * leftMargin, 50), Qt::AlignCenter, "Bus Ticket - Reservation Confirmation");
+    y += lineHeight + sectionSpacing; // Extra space after title
 
     // Passenger Details Section
-    painter.setFont(QFont("Helvetica", 14, QFont::Bold));
+    painter.setFont(QFont("Helvetica", 16, QFont::Bold));
     painter.drawText(leftMargin, y, "Passenger Details");
     y += lineHeight;
 
-    painter.setFont(QFont("Helvetica", 12));
+    painter.setFont(QFont("Helvetica", 13));
     painter.drawText(leftMargin, y, "Full Name:");
     painter.drawText(leftMargin + valueIndent, y, fullName);
     y += lineHeight;
@@ -132,11 +138,11 @@ void ReservationHandler::exportToPDF(const QString &fullName,
     y += sectionSpacing;
 
     // Trip Information Section
-    painter.setFont(QFont("Helvetica", 14, QFont::Bold));
+    painter.setFont(QFont("Helvetica", 16, QFont::Bold));
     painter.drawText(leftMargin, y, "Trip Information");
     y += lineHeight;
 
-    painter.setFont(QFont("Helvetica", 12));
+    painter.setFont(QFont("Helvetica", 13));
     painter.drawText(leftMargin, y, "Route:");
     painter.drawText(leftMargin + valueIndent, y, route);
     y += lineHeight;
@@ -173,10 +179,10 @@ void ReservationHandler::exportToPDF(const QString &fullName,
     painter.drawText(leftMargin + valueIndent, y, reservationDate);
     y += sectionSpacing;
 
-    // Draw QR code on right side, aligned to roughly the middle of the content
-    const int qrSize = 150;
+    // Draw QR code on right side, below text
+    const int qrSize = 170;
     int qrX = writer.width() - qrSize - leftMargin;
-    int qrY = 150; // fixed Y position so it doesn't overlap text
+    int qrY = (y / 2) - (qrSize / 2); // Vertically center with sections
 
     QString qrData = QString("%1|%2|%3|%4|%5|%6")
                          .arg(fullName)
@@ -198,8 +204,8 @@ void ReservationHandler::exportToPDF(const QString &fullName,
 
     painter.drawImage(QRect(qrX, qrY, qrSize, qrSize), qrImage);
 
-    painter.setFont(QFont("Helvetica", 10, QFont::Bold));
-    painter.drawText(qrX, qrY + qrSize + 20, "Scan for Ticket Details");
+    painter.setFont(QFont("Helvetica", 13, QFont::Bold));
+    painter.drawText(qrX, qrY + qrSize + 28, "Scan for Ticket Details");
 
     painter.end();
 
@@ -259,12 +265,23 @@ bool ReservationHandler::connectDatabase()
 
     if (columnCount > 0 && columnCount != 17) {
         qDebug() << "Old table detected with" << columnCount << "columns. Dropping table.";
+
+        // Close the DB connection first to avoid locking issues
+        db.close();
+
+        // Reopen the DB connection
+        if (!db.open()) {
+            qWarning() << "Failed to reopen DB:" << db.lastError().text();
+            return false;
+        }
+
         QSqlQuery dropQuery(db);
         if (!dropQuery.exec("DROP TABLE reservations;")) {
             qWarning() << "Failed to drop old table:" << dropQuery.lastError().text();
             return false;
         }
     }
+
 
     // (Re)create the table
     QSqlQuery createQuery(db);
@@ -325,9 +342,11 @@ void ReservationHandler::setRouteId(const QString &routeId)
     query.prepare(R"(
         SELECT from_district, to_district, date, departure_time, arrival_time,
                price, bus_no, driver_info, drivers_cellno, seats
-        FROM routes1_view WHERE route_id = ?
+        FROM routes1_view
+        WHERE route_id = ?
     )");
-    query.addBindValue(routeId);
+
+    query.addBindValue(routeId.toInt());
 
     if (query.exec() && query.next()) {
         QString from = query.value(0).toString();
@@ -371,7 +390,7 @@ bool ReservationHandler::saveReservation(
     QString passengerPhone,
     QString method,
     QString routeId,
-    int currentUserId)
+    int userId)
 {
     if (!db.isOpen()) {
         if (!connectDatabase()) {
@@ -384,7 +403,7 @@ bool ReservationHandler::saveReservation(
     QSqlQuery fetchQuery(db);
     fetchQuery.prepare(R"(
         SELECT from_district, to_district, departure_time, arrival_time,
-               price, bus_no, driver_info, driver_cellno, seats, date
+               price, bus_no, driver_info, drivers_cellno, seats, date
         FROM routes1_view
         WHERE route_id = ?
     )");
@@ -427,7 +446,7 @@ bool ReservationHandler::saveReservation(
     query.addBindValue(QDateTime::currentDateTime().toString(Qt::ISODate));
     query.addBindValue(seats);
     query.addBindValue(ticketPrice.toDouble());
-    query.addBindValue(currentUserId);
+    query.addBindValue(userId);
     query.addBindValue(departureTime);
     query.addBindValue(arrivalTime);
     query.addBindValue(busNo);

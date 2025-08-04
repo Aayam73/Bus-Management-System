@@ -3,6 +3,7 @@
 
 #include "bookingwindow.h"
 #include "accountwindow.h"
+#include "sessionmanager.h"
 #include <QObject>
 #include <QQuickView>
 #include <QStringListModel>
@@ -16,7 +17,7 @@ class HomeWindow : public QObject
     Q_PROPERTY(QVariantList routes READ routes NOTIFY searchResultsReady)
 
 public:
-    explicit HomeWindow(QObject *parent = nullptr);
+    explicit HomeWindow(SessionManager* sessionManager, QObject* parent = nullptr);
     ~HomeWindow();
 
     QAbstractListModel* districtModel() const { return m_districtModel; }
@@ -51,6 +52,7 @@ private:
     AccountWindow *m_accountWindow = nullptr;
     QVariantList m_routes;
     BookingWindow* m_bookingWindow = nullptr;
+    SessionManager* m_sessionManager;
     QString m_lastFromDistrict;
     QString m_lastToDistrict;
     QString m_lastDate;

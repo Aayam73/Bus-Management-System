@@ -108,17 +108,6 @@ void SignupWindow::handleSignup(const QString &username, const QString &password
 }
 
 
-void SignupWindow::goToLogin()
-{
-    LoginWindow *login = new LoginWindow();
-    login->show();
-
-    // Close this view
-    if (m_view) {
-        m_view->close();
-    }
-}
-
 
 void SignupWindow::show() {
     if (m_view)

@@ -2,6 +2,7 @@
 #define BOOKINGWINDOW_H
 
 #include "paymenthandler.h"
+#include "sessionmanager.h"
 #include <QObject>
 #include <QQuickView>
 #include <QDate>
@@ -26,7 +27,7 @@ class BookingWindow : public QObject
 
 
 public:
-    explicit BookingWindow(QObject *parent = nullptr);
+    explicit BookingWindow(SessionManager* sessionManager, QObject *parent = nullptr);
     ~BookingWindow();
 
     // Getter methods for properties
@@ -82,6 +83,7 @@ signals:
 private:
     QQuickView *m_view = nullptr;
     PaymentHandler *m_paymentHandler = nullptr;
+    SessionManager* m_sessionManager;
     QString m_routeId;
     QString m_fromLocation;
     QString m_toLocation;

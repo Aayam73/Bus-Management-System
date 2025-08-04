@@ -58,8 +58,8 @@ Rectangle {
     Image {
         id: logo
         source: "qrc:/images/images/logo.png"
-        width: 100
-        height: 50
+        width: 200
+        height: 200
         anchors.left: parent.left
         anchors.top: parent.top
         anchors.margins: 10

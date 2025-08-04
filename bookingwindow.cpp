@@ -1,5 +1,6 @@
 #include "bookingwindow.h"
 #include "homewindow.h"
+#include "sessionmanager.h"
 #include <QDebug>
 #include <QQmlContext>
 #include <QDate>
@@ -7,11 +8,11 @@
 #include <QQuickItem>
 
 
-BookingWindow::BookingWindow(QObject *parent)
-    : QObject(parent)
+BookingWindow::BookingWindow(SessionManager* sessionManager, QObject *parent)
+    : QObject(parent), m_sessionManager(sessionManager)
 {
     m_view = new QQuickView();
-    m_paymentHandler = new PaymentHandler(this);
+    m_paymentHandler = new PaymentHandler(m_sessionManager, this);
     m_view->rootContext()->setContextProperty("bookingWindow", this);
     m_view->setSource(QUrl("qrc:/Qml/BookingPage.qml"));
     m_view->setResizeMode(QQuickView::SizeRootObjectToView);
@@ -56,7 +57,7 @@ void BookingWindow::setRouteData(const QString &routeId, const QString &from,
 void BookingWindow::showHomeWindow()
 {
     qDebug() << "showHomeWindow() called from QML. Opening HomeWindow...";
-    HomeWindow *home = new HomeWindow;
+    HomeWindow *home = new HomeWindow(m_sessionManager);
     home->show();
 }
 
@@ -73,7 +74,7 @@ void BookingWindow::payNowClicked(const QString &routeId)
     this->view()->hide();
 
     if (!m_paymentHandler) {
-        m_paymentHandler = new PaymentHandler(this->parent());
+        m_paymentHandler = new PaymentHandler(m_sessionManager, this);
     }
 
     m_paymentHandler->setRouteId(routeId);

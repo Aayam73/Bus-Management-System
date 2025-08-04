@@ -6,13 +6,15 @@
 #include <QRegularExpression>
 #include <QQuickView>
 #include "reservationhandler.h"
+#include "sessionmanager.h"
+
 
 class PaymentHandler : public QObject
 {
     Q_OBJECT
     Q_PROPERTY(QString routeId READ routeId WRITE setRouteId NOTIFY routeIdChanged)
 public:
-    explicit PaymentHandler(QObject *parent = nullptr);
+    explicit PaymentHandler(SessionManager* sessionManager, QObject *parent = nullptr);
 
     // Q_INVOKABLE method callable from QML
     Q_INVOKABLE void processPayment(const QString &name, const QString &email, const QString &phone,
@@ -49,6 +51,7 @@ signals:
 
 private:
     // Private helper functions for validation
+    SessionManager* m_sessionManager = nullptr;
     bool validateEmail(const QString &email);
     bool validatePhone(const QString &phone);
     bool validateMpin(const QString &mpin);

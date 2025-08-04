@@ -2,6 +2,7 @@
 #define LOGINWINDOW_H
 
 #include "homewindow.h"
+#include "sessionmanager.h"
 #include <QObject>
 #include <QQuickView>
 
@@ -13,7 +14,7 @@ class LoginWindow : public QObject
 
 
 public:
-    LoginWindow(QObject *parent = nullptr);
+    explicit LoginWindow(SessionManager* sessionManager, QObject *parent = nullptr);
     ~LoginWindow();
 
     Q_INVOKABLE void handleLogin(const QString &username, const QString &password);
@@ -41,6 +42,7 @@ private:
     QQuickView *m_view;
     HomeWindow *m_homeWindow = nullptr;
     QString m_username;
+    SessionManager* sessionManager;
 
 
 };
