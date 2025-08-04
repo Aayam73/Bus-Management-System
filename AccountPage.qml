@@ -36,6 +36,7 @@ Rectangle {
                 height: 150
                 color: "#2d3748"  // Matching dark background
 
+                // Row for Back button + Title (Left aligned)
                 Row {
                     anchors.left: parent.left
                     anchors.top: parent.top
@@ -52,7 +53,7 @@ Rectangle {
                         font.family: "Segoe UI"
 
                         background: Rectangle {
-                            color: backButton.pressed ? "#48bb78" : "#68d391"  // Green color matching your theme
+                            color: backButton.pressed ? "#48bb78" : "#68d391"
                             radius: 20
                             border.color: "#68d391"
                             border.width: 2
@@ -78,8 +79,137 @@ Rectangle {
                         font.bold: true
                         font.pixelSize: 32
                         font.family: "Segoe UI"
-                        color: "#ffffff"  // White text on dark background
+                        color: "#ffffff"
                         anchors.verticalCenter: backButton.verticalCenter
+                    }
+                }
+
+                // Logout button aligned right (outside the Row)
+                Button {
+                    id: logoutButton
+                    text: "Logout"
+                    width: 100
+                    height: 40
+                    anchors.right: parent.right
+                    anchors.top: parent.top
+                    anchors.margins: 25
+                    font.bold: true
+                    font.pixelSize: 14
+                    font.family: "Segoe UI"
+
+                    background: Rectangle {
+                        color: logoutButton.pressed ? "#f56565" : "#fc8181"  // Red theme
+                        radius: 20
+                        border.color: "#fc8181"
+                        border.width: 2
+                    }
+
+                    contentItem: Text {
+                        text: logoutButton.text
+                        font: logoutButton.font
+                        color: "#ffffff"
+                        horizontalAlignment: Text.AlignHCenter
+                        verticalAlignment: Text.AlignVCenter
+                    }
+
+                    onClicked: confirmationDialog.open()
+                }
+
+                // Confirmation dialog
+                Dialog {
+                    id: confirmationDialog
+                    modal: true
+                    width: 350
+                    height: 180
+
+                    anchors.centerIn: Overlay.overlay
+
+                    background: Rectangle {
+                        color: "#2d3748" // Dark background
+                        radius: 16
+                        border.color: "#68d391" // Green border
+                        border.width: 2
+                    }
+
+                    contentItem: Column {
+                        anchors.fill: parent
+                        anchors.margins: 20
+                        spacing: 20
+
+                        Text {
+                            text: "Confirm Logout"
+                            color: "#ffffff"
+                            font.bold: true
+                            font.pixelSize: 22
+                            horizontalAlignment: Text.AlignHCenter
+                            width: parent.width
+                        }
+
+                        Text {
+                            text: "Are you sure you want to log out?"
+                            color: "#cbd5e0"
+                            font.pixelSize: 16
+                            horizontalAlignment: Text.AlignHCenter
+                            width: parent.width
+                        }
+
+                        Row {
+                            spacing: 20
+                            anchors.horizontalCenter: parent.horizontalCenter
+
+                            // Yes button
+                            Button {
+                                text: "Yes"
+                                width: 100
+                                height: 40
+
+                                background: Rectangle {
+                                    color: "#1a202c" // Dark background
+                                    radius: 20
+                                    border.color: "#68d391" // Green border
+                                    border.width: 2
+                                }
+
+                                contentItem: Text {
+                                    text: parent.text
+                                    color: "#68d391" // Green text
+                                    horizontalAlignment: Text.AlignHCenter
+                                    verticalAlignment: Text.AlignVCenter
+                                    font.bold: true
+                                }
+
+                                onClicked: {
+                                    confirmationDialog.close()
+                                    while (stackView.depth > 1) {
+                                        stackView.pop()
+                                    }
+                                }
+                            }
+
+                            // No button
+                            Button {
+                                text: "No"
+                                width: 100
+                                height: 40
+
+                                background: Rectangle {
+                                    color: "#1a202c" // Dark background
+                                    radius: 20
+                                    border.color: "#fc8181" // Red border
+                                    border.width: 2
+                                }
+
+                                contentItem: Text {
+                                    text: parent.text
+                                    color: "#fc8181" // Red text
+                                    horizontalAlignment: Text.AlignHCenter
+                                    verticalAlignment: Text.AlignVCenter
+                                    font.bold: true
+                                }
+
+                                onClicked: confirmationDialog.close()
+                            }
+                        }
                     }
                 }
             }
@@ -239,14 +369,6 @@ Rectangle {
                                             color: "#a0aec0"
                                         }
 
-                                        Connections {
-                                            target: accountWindow
-                                            onUsernameChanged: {
-                                                console.log("QML Received - Username:", accountWindow.username)
-                                            }
-                                        }
-
-                                        // Lock icon to indicate non-editable
                                         Text {
                                             anchors.right: parent.right
                                             anchors.rightMargin: 15
@@ -670,6 +792,81 @@ Rectangle {
                                         }
                                     }
                                 }
+
+                                Rectangle {
+                                    id: reservationsBox
+                                    width: parent.width
+                                    height: 80
+                                    radius: 15
+                                    border.color: "#68d391"
+                                    border.width: 1
+
+                                    property color normalColor: "#4a5568"
+                                    property color hoverColor: "#68d391"
+                                    property color blinkColor: "#a3e635" // Bright green blink
+                                    property bool isBlinking: false
+
+                                    // Dynamic color logic
+                                    color: isBlinking ? blinkColor : (mouseAreaReservations.containsMouse ? hoverColor : normalColor)
+
+                                    Behavior on color {
+                                        ColorAnimation {
+                                            duration: 150
+                                        }
+                                    }
+
+                                    Row {
+                                        anchors.left: parent.left
+                                        anchors.verticalCenter: parent.verticalCenter
+                                        anchors.leftMargin: 20
+                                        spacing: 15
+
+                                        Rectangle {
+                                            width: 40
+                                            height: 40
+                                            radius: 20
+                                            color: "#48bb78"
+                                            anchors.verticalCenter: parent.verticalCenter
+
+                                            Text {
+                                                anchors.centerIn: parent
+                                                text: "🚌"
+                                                font.pixelSize: 18
+                                            }
+                                        }
+
+                                        Text {
+                                            text: "Reservations"
+                                            font.bold: true
+                                            font.pixelSize: 14
+                                            color: "#e2e8f0"
+                                            font.family: "Segoe UI"
+                                        }
+                                    }
+
+                                    MouseArea {
+                                        id: mouseAreaReservations
+                                        anchors.fill: parent
+                                        hoverEnabled: true
+                                        cursorShape: Qt.PointingHandCursor
+
+                                        onClicked: {
+                                            // Trigger blink
+                                            reservationsBox.isBlinking = true
+                                            Qt.callLater(() => {
+                                                reservationsBox.isBlinking = false
+                                            })
+
+                                            if (stackView) {
+                                            stackView.push("qrc:/Qml/ReservationPanel.qml")
+                                            } else {
+                                                console.warn("stackView is not set")
+                                            }
+                                        }
+                                    }
+                                }
+
+
                             }
                         }
                     }

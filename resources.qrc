@@ -11,6 +11,7 @@
         <file>PaymentPage.qml</file>
         <file>ReservationWindow.qml</file>
         <file>AccountPage.qml</file>
+        <file>ReservationPanel.qml</file>
     </qresource>
     <qresource prefix="/assets">
         <file>database/bus_database.db</file>

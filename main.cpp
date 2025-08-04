@@ -8,6 +8,7 @@
 #include "reservationhandler.h"
 #include "accountwindow.h"
 #include "sessionmanager.h"
+#include "reservationpanel.h"
 #include <QMessageBox>
 #include <QSqlDatabase>
 #include <QSqlError>
@@ -98,6 +99,7 @@ int main(int argc, char *argv[])
     BookingWindow bookingWindow(&sessionManager);
     PaymentHandler paymentHandler(&sessionManager);
     ReservationHandler reservationHandler;
+    ReservationPanel reservationPanel(&sessionManager);
     engine.rootContext()->setContextProperty("startWindow", &startWindow);
     engine.rootContext()->setContextProperty("signupWindow", &signup);
     engine.rootContext()->setContextProperty("loginWindow", &login);
@@ -107,6 +109,7 @@ int main(int argc, char *argv[])
     engine.rootContext()->setContextProperty("paymentHandler", &paymentHandler);
     engine.rootContext()->setContextProperty("reservationHandler", &reservationHandler);
     engine.rootContext()->setContextProperty("sessionManager", &sessionManager);
+    engine.rootContext()->setContextProperty("reservationPanel", &reservationPanel);
 
     const QUrl url(QStringLiteral("qrc:/Qml/ReservationWindow.qml"));
     QObject::connect(&engine, &QQmlApplicationEngine::objectCreated,

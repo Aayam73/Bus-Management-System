@@ -24,6 +24,7 @@ SOURCES += \
     loginwindow.cpp \
     paymenthandler.cpp \
     reservationhandler.cpp \
+    reservationpanel.cpp \
     sessionmanager.cpp \
     signupwindow.cpp \
     startwindow.cpp \
@@ -37,6 +38,7 @@ HEADERS += \
     loginwindow.h \
     paymenthandler.h \
     reservationhandler.h \
+    reservationpanel.h \
     sessionmanager.h \
     signupwindow.h \
     startwindow.h \

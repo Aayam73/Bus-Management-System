@@ -46,7 +46,6 @@ Rectangle {
                     } else {
                         console.log("DEBUG: headerRow is still undefined here!");
                     }
-                    console.log("DEBUG: resultsScrollView (w,h):", resultsScrollView.width, resultsScrollView.height);
                     console.log("DEBUG: resultsList (w,h):", resultsList.width, resultsList.height);
                     console.log("DEBUG: footer (h):", footer.height);
                 });
@@ -58,8 +57,8 @@ Rectangle {
     Image {
         id: logo
         source: "qrc:/images/images/logo.png"
-        width: 200
-        height: 200
+        width: 150
+        height: 150
         anchors.left: parent.left
         anchors.top: parent.top
         anchors.margins: 10
@@ -349,15 +348,24 @@ Rectangle {
             border.color: "red"
             border.width: 2
             clip: true
+            property int padding: 10
 
             // 🔹 Header Row - Moved out of the Column to ensure ID is always accessible
             Row {
                 id: headerRow // IMPORTANT: ID is now here
                 spacing: 10
-                width: parent.width - (resultsColumn.padding * 2) // Reference resultsColumn's padding
+                anchors {
+                    top: parent.top
+                    left: parent.left
+                    right: parent.right
+                    horizontalCenter: parent.horizontalCenter
+                    topMargin: resultsBox.padding
+                    leftMargin: resultsBox.padding
+                    rightMargin: resultsBox.padding
+                }
 
                 Rectangle {
-                        width: 10
+                        width: 6
                         height: parent.height
                         color: "transparent"
                     }
@@ -369,35 +377,43 @@ Rectangle {
                 Rectangle { width: 80; height: 30; color: "#9575cd"; Text { anchors.centerIn: parent; text: "Depart"; font.bold: true; color: "white" } }
                 Rectangle { width: 80; height: 30; color: "#9575cd"; Text { anchors.centerIn: parent; text: "Arrive"; font.bold: true; color: "white" } }
                 Rectangle { width: 60; height: 30; color: "#9575cd"; Text { anchors.centerIn: parent; text: "Price"; font.bold: true; color: "white" } }
-                Rectangle { width: 80; height: 30; color: "#9575cd"; Text { anchors.centerIn: parent; text: "Bus No"; font.bold: true; color: "white" } }
+                Rectangle { width: 100; height: 30; color: "#9575cd"; Text { anchors.centerIn: parent; text: "Bus No"; font.bold: true; color: "white" } }
                 Rectangle { width: 100; height: 30; color: "#9575cd"; Text { anchors.centerIn: parent; text: "Driver"; font.bold: true; color: "white" } }
                 Rectangle { width: 100; height: 30; color: "#9575cd"; Text { anchors.centerIn: parent; text: "Cell No"; font.bold: true; color: "white" } }
                 Rectangle { width: 40; height: 30; color: "#9575cd"; Text { anchors.centerIn: parent; text: "Seats"; font.bold: true; color: "white" } }
                 Rectangle { width: 60; height: 30; color: "#9575cd"; Text { anchors.centerIn: parent; text: "Book"; font.bold: true; color: "white" } }
             }
 
+            Rectangle {
+                    id: separatorLine
+                    height: 1
+                    width: parent.width - (padding * 2)
+                    anchors {
+                        top: headerRow.bottom
+                        left: parent.left
+                        leftMargin: padding
+                    }
+                    color: "#7e57c2"  // Choose a nice color for the line
+                }
+
             Column {
                 id: resultsColumn // Give the Column an ID
-                anchors.top: headerRow.bottom // Anchor below headerRow
+                anchors.top: separatorLine.bottom
+                anchors.horizontalCenter: parent.horizontalCenter
                 anchors.left: parent.left
+                anchors.leftMargin: resultsBox.padding
                 anchors.right: parent.right
+                anchors.rightMargin: resultsBox.padding
                 anchors.bottom: parent.bottom // Fill the rest of resultsBox
                 spacing: 5
-                padding: 5
-
-                // 🔹 Dynamic List from C++ (inside ScrollView again)
-                ScrollView {
-                    id: resultsScrollView
-                    width: parent.width // Parent is resultsColumn
-                    height: parent.height // Take all available height in resultsColumn
-                    clip: true
-                    background: Rectangle { color: "lightblue"; opacity: 0.5 } // DEBUG: ScrollView background
+                padding: 0
 
                     ListView {
                         id: resultsList
                         model: routeListModel
                         width: parent.width
-                        height: contentHeight // Crucial for ListView inside ScrollView to determine its natural size
+                        anchors.fill: parent
+                        anchors.bottomMargin: 5
                         clip: true
                         spacing: 5
 
@@ -407,10 +423,10 @@ Rectangle {
                             spacing: 10
 
                             Rectangle {
-                                    width: 6
-                                    height: parent.height
-                                    color: "transparent"
-                                }
+                                width: 6
+                                height: parent.height
+                                color: "transparent"
+                            }
 
                             Rectangle { width: 60; height: parent.height; color: "black"; Text { anchors.centerIn: parent; text: model.route_id; color: "white" } }
                             Rectangle { width: 80; height: parent.height; color: "#ede7f6"; Text { anchors.centerIn: parent; text: model.from_district; color: "#333" } }
@@ -419,7 +435,7 @@ Rectangle {
                             Rectangle { width: 80; height: parent.height; color: "#ede7f6"; Text { anchors.centerIn: parent; text: model.departure_time; color: "#333" } }
                             Rectangle { width: 80; height: parent.height; color: "#ede7f6"; Text { anchors.centerIn: parent; text: model.arrival_time; color: "#333" } }
                             Rectangle { width: 60; height: parent.height; color: "#ede7f6"; Text { anchors.centerIn: parent; text: model.price; color: "#333" } }
-                            Rectangle { width: 80; height: parent.height; color: "#ede7f6"; Text { anchors.centerIn: parent; text: model.bus_no; color: "#333" } }
+                            Rectangle { width: 100; height: parent.height; color: "#ede7f6"; Text { anchors.centerIn: parent; text: model.bus_no; color: "#333" } }
                             Rectangle { width: 100; height: parent.height; color: "#ede7f6"; Text { anchors.centerIn: parent; text: model.driver_info; color: "#333" } }
                             Rectangle { width: 100; height: parent.height; color: "#ede7f6"; Text { anchors.centerIn: parent; text: model.drivers_cellno; color: "#333" } }
                             Rectangle { width: 40; height: parent.height; color: "#ede7f6"; Text { anchors.centerIn: parent; text: model.seats; color: "#333" } }
@@ -449,7 +465,6 @@ Rectangle {
                             }
                         }
                     }
-                }
             }
         }
 
