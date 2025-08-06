@@ -36,7 +36,7 @@ PaymentHandler::PaymentHandler(SessionManager* sessionManager, QObject *parent)
         // Update UI seat count dynamically
         QObject *rootObj = m_view->rootObject();
         if (rootObj) {
-            rootObj->setProperty("availableSeats", seats); // QML property
+            rootObj->setProperty("availableSeats", seats);
         }
     });
 }
@@ -46,7 +46,6 @@ void PaymentHandler::processPayment(const QString &name, const QString &email, c
 {
     qDebug() << "Processing payment...";
 
-    // Input Validations (similar to your original validateInputs(), but using signals)
     if (name.trimmed().isEmpty()) {
         emit onValidationError("nameField", "Please enter your name.");
         return;
@@ -71,7 +70,6 @@ void PaymentHandler::processPayment(const QString &name, const QString &email, c
         return;
     }
 
-    // Payment method specific validations
     if (isEsewa) {
         if (paymentId.trimmed().isEmpty()) {
             emit onValidationError("esewaId", "Please enter your eSewa ID.");
@@ -95,21 +93,19 @@ void PaymentHandler::processPayment(const QString &name, const QString &email, c
             emit onValidationError("khaltiMpin", "Please enter your Khalti MPIN.");
             return;
         }
-        QString kmpinTrimmed = mpin.trimmed(); // Using mpin for Khalti MPIN as well from function arg
+        QString kmpinTrimmed = mpin.trimmed();
         if (!validateMpin(kmpinTrimmed)) {
             emit onValidationError("khaltiMpin", "Please enter a valid 4-digit Khalti MPIN.");
             return;
         }
     }
 
-    // If all validations pass
+
     QString method = isEsewa ? "eSewa" : "Khalti";
     qDebug() << "All inputs valid. Simulating payment success for:" << name << "via" << method;
 
-    // In a real application, you'd integrate with a payment gateway here.
-    // For this example, we'll just emit success.
     emit onPaymentSuccess("Thank you, " + name + "! Your payment was successful via " + method + ".");
-    // emit paymentFlowComplete(); // Optional: signal to tell QML flow is done
+
 }
 
 bool PaymentHandler::validateEmail(const QString &email) {
@@ -144,13 +140,12 @@ void PaymentHandler::payNowClicked(
     const QString &passengerPhone,
     const QString &paymentMethod)
 {
-    // Hide payment window
+
 
     int userId = m_sessionManager->userId();
     if (m_view) m_view->hide();
 
-    // Decrease seat count by 1, only if seats > 0
-    QSqlDatabase db = QSqlDatabase::database("main"); // Use your existing connection
+    QSqlDatabase db = QSqlDatabase::database("main");
     if (!db.isOpen()) {
         qDebug() << "DB not open, attempting to open...";
         if (!db.open()) {
@@ -160,8 +155,6 @@ void PaymentHandler::payNowClicked(
     }
 
     QSqlQuery query(db);
-
-    // Update only if seats > 0
     query.prepare("UPDATE routes1 SET seats = seats - 1 WHERE route_id = :routeId AND seats > 0");
     query.bindValue(":routeId", routeId);
 
@@ -181,7 +174,7 @@ void PaymentHandler::payNowClicked(
 
     if (fetchQuery.exec() && fetchQuery.next()) {
         int updatedSeats = fetchQuery.value(0).toInt();
-        emit seatsUpdated(routeId, updatedSeats); // Inform UI
+        emit seatsUpdated(routeId, updatedSeats);
         qDebug() << "Updated seats: " << updatedSeats;
     }
 
@@ -189,7 +182,6 @@ void PaymentHandler::payNowClicked(
         m_reservationHandler = new ReservationHandler(nullptr);
     }
 
-    // Let ReservationHandler handle everything
     m_reservationHandler->openReservation(
     routeId, passengerName, passengerEmail, passengerPhone, paymentMethod);
 

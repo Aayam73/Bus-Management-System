@@ -51,10 +51,8 @@ void connectToDatabase() {
         QSqlDatabase db = QSqlDatabase::database("main");
         if (db.isOpen()) {
             qDebug() << "Database connection 'main' already exists and is open.";
-            return; // Database is already connected and open, nothing more to do
         } else {
             qDebug() << "Database connection 'main' exists but is not open. Attempting to open...";
-            // If it exists but is not open, try to open it
             if (!db.open()) {
                 qWarning() << "Failed to re-open existing database connection 'main':" << db.lastError().text();
                 QMessageBox::critical(nullptr, "Database Error", "Failed to re-open existing database connection: " + db.lastError().text());

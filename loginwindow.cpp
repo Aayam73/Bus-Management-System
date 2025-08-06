@@ -103,8 +103,6 @@ void LoginWindow::goToSignup()
         delete m_view;
         m_view = nullptr;
     }
-
-    // Open Signup window (which manages its own QQuickView)
     SignupWindow *signup = new SignupWindow();
     Q_UNUSED(signup);
 }

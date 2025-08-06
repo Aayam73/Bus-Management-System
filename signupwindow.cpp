@@ -15,13 +15,12 @@
 
 // Constructor
 SignupWindow::SignupWindow(QObject *parent)
-    : QObject(parent)  // Changed from QWidget to QObject
+    : QObject(parent)
 {
-    // Load QML SignupPage
     m_view = new QQuickView();
     m_view->setResizeMode(QQuickView::SizeRootObjectToView);
-    m_view->rootContext()->setContextProperty("signupWindow", this);  // Expose this class to QML
-    m_view->setSource(QUrl("qrc:/Qml/SignupPage.qml"));   // Or local file path
+    m_view->rootContext()->setContextProperty("signupWindow", this);
+    m_view->setSource(QUrl("qrc:/Qml/SignupPage.qml"));
 }
 
 // Destructor

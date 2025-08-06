@@ -51,9 +51,8 @@ ReservationHandler::ReservationHandler(QObject *parent)
     m_view->setResizeMode(QQuickView::SizeRootObjectToView);
 }
 
-void ReservationHandler::decreaseAvailableSeats(const QString &routeId) // Parameter numSeatsToDecrease removed
+void ReservationHandler::decreaseAvailableSeats(const QString &routeId)
 {
-    // The amount to decrease is now hardcoded in C++
     const int numSeatsToDecrease = 1;
 
     qDebug() << "C++: Attempting to decrease seats for routeId:" << routeId << "by (hardcoded):" << numSeatsToDecrease;
@@ -66,9 +65,8 @@ void ReservationHandler::decreaseAvailableSeats(const QString &routeId) // Param
     }
 
     QSqlQuery query(db);
-    // Use MAX(0, seats - ?) to prevent negative seat counts
     query.prepare("UPDATE routes SET seats = MAX(0, seats - ?) WHERE route_id = ?");
-    query.addBindValue(numSeatsToDecrease); // Hardcoded value used here
+    query.addBindValue(numSeatsToDecrease);
     query.addBindValue(routeId);
 
     if (query.exec()) {
@@ -95,103 +93,80 @@ void ReservationHandler::exportToPDF(const QString &fullName,
                                      const QString &method,
                                      const QString &reservationDate)
 {
-    QString downloadsDir = QStandardPaths::writableLocation(QStandardPaths::DownloadLocation);
-    QDir().mkpath(downloadsDir);
-    QString fileName = downloadsDir + QString("/Ticket_%1.pdf").arg(QDateTime::currentDateTime().toString("yyyyMMdd_hhmmss"));
+    QString filePath = QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation)
+    + QDir::separator() + "Ticket_"
+        + QDateTime::currentDateTime().toString("yyyyMMdd_hhmmss") + ".pdf";
 
-    QPdfWriter writer(fileName);
-    writer.setPageSize(QPageSize::A4);
-    writer.setPageOrientation(QPageLayout::Landscape);
-
-    QPageLayout pageLayout(QPageSize::A4, QPageLayout::Landscape, QMarginsF(70, 60, 70, 60));
-    writer.setPageLayout(pageLayout);
+    QPdfWriter writer(filePath);
+    writer.setPageSize(QPageSize::A5);
+    writer.setResolution(300);
 
     QPainter painter(&writer);
-    painter.setPen(Qt::black);
 
-    QRectF contentRect = pageLayout.paintRect();  // use points, not pixels!
+    // Layout
+    int margin = 65;
+    int x = margin;
+    int y = margin;
+    const int lineSpacing = 65;
+    const int sectionSpacing = 80;
 
-    // Columns setup
-    qreal xLabel = contentRect.left() + 10;
-    qreal xValue = xLabel + 170;
+    // Fonts
+    QFont headerFont("Arial", 25, QFont::Bold);
+    QFont regularFont("Arial", 13);
+    QFont italicFont("Arial", 15, QFont::StyleItalic);
 
-    // Row and section spacing
-    const qreal lineHeight = 22;
-    const qreal sectionSpacing = 30;
-
-    // Draw Title centered at top
-    painter.setFont(QFont("Helvetica", 24, QFont::Bold));
-    painter.drawText(QRectF(contentRect.left(), contentRect.top(), contentRect.width(), 40), Qt::AlignCenter, "Bus Ticket - Reservation Confirmation");
-
-    // Starting y position below the title
-    qreal y = contentRect.top() + 50;
-
-    // Helper lambda for drawing rows
-    auto drawRow = [&](const QString &label, const QString &value) {
-        QRectF labelRect(xLabel, y - (lineHeight * 0.75), 150, lineHeight);
-        QRectF valueRect(xValue, y - (lineHeight * 0.75), 300, lineHeight);
-        painter.drawText(labelRect, Qt::AlignVCenter | Qt::AlignLeft, label);
-        painter.drawText(valueRect, Qt::AlignVCenter | Qt::AlignLeft, value);
-        y += lineHeight;
-    };
-
-    // Passenger Details Header
-    painter.setFont(QFont("Helvetica", 16, QFont::Bold));
-    painter.drawText(xLabel, y, "Passenger Details");
-    y += lineHeight;
-
-    painter.setFont(QFont("Helvetica", 12));
-    drawRow("Full Name:", fullName);
-    drawRow("Phone Number:", phoneNumber);
-    drawRow("Payment Method:", method);
-
+    // Header
+    painter.setFont(headerFont);
+    painter.drawText(x, y, "Ticket Receipt");
     y += sectionSpacing;
 
-    // Trip Details Header
-    painter.setFont(QFont("Helvetica", 16, QFont::Bold));
-    painter.drawText(xLabel, y, "Trip Information");
-    y += lineHeight;
+    // Passenger Info
+    painter.setFont(regularFont);
+    painter.drawText(x, y, "Passenger Name: " + fullName); y += lineSpacing;
+    painter.drawText(x, y, "Phone Number: " + phoneNumber); y += lineSpacing;
+    painter.drawText(x, y, "Route: " + route); y += lineSpacing;
+    painter.drawText(x, y, "Travel Date: " + travelDate); y += lineSpacing;
+    painter.drawText(x, y, "Departure Time: " + departureTime); y += lineSpacing;
+    painter.drawText(x, y, "Arrival Time: " + arrivalTime); y += lineSpacing;
+    painter.drawText(x, y, "Bus No: " + busNo); y += lineSpacing;
+    painter.drawText(x, y, "Driver: " + driverInfo); y += lineSpacing;
+    painter.drawText(x, y, "Driver Contact: " + contactPhone); y += lineSpacing;
+    painter.drawText(x, y, "Price: Rs. " + ticketPrice); y += lineSpacing;
+    painter.drawText(x, y, "Payment Method: " + method); y += lineSpacing;
+    painter.drawText(x, y, "Reservation Date: " + reservationDate); y += sectionSpacing + 20;
 
-    painter.setFont(QFont("Helvetica", 12));
-    drawRow("Route:", route);
-    drawRow("Travel Date:", travelDate);
-    drawRow("Departure Time:", departureTime);
-    drawRow("Arrival Time:", arrivalTime);
-    drawRow("Bus No:", busNo);
-    drawRow("Driver Name:", driverInfo);
-    drawRow("Driver Contact:", contactPhone);
-    drawRow("Ticket Price:", "Rs. " + ticketPrice);
-    drawRow("Reservation Date:", reservationDate);
+    // -------- QR Code --------
+    using qrcodegen::QrCode;
+    using qrcodegen::QrSegment;
 
-    // QR Code position (right side)
-    const qreal qrSize = 150;
-    const qreal qrX = contentRect.right() - qrSize - 20;
-    const qreal qrLabelY = contentRect.top() + 100;
+    QString qrData = QString("Passenger: %1\nRoute: %2\nDate: %3\nPrice: Rs.%4")
+                         .arg(fullName, route, travelDate, ticketPrice);
 
-    painter.setFont(QFont("Helvetica", 12, QFont::Bold));
-    painter.drawText(QRectF(qrX, qrLabelY, qrSize, 20), Qt::AlignCenter, "Scan for Ticket Details");
+    const QrCode qr = QrCode::encodeText(qrData.toUtf8().constData(), QrCode::Ecc::LOW);
+    const int qrSize = qr.getSize();
+    const int scale = 8;
 
-    const qreal qrImageY = qrLabelY + 25;
+    int qrX = x;
+    int qrY = y;
 
-    QString qrData = QString("%1|%2|%3|%4|%5|%6")
-                         .arg(fullName, route, travelDate, ticketPrice, reservationDate, phoneNumber);
-
-    QrCode qr = QrCode::encodeText(qrData.toUtf8().constData(), QrCode::Ecc::LOW);
-
-    int size = qr.getSize();
-    QImage qrImage(size, size, QImage::Format_RGB888);
-    for (int yPixel = 0; yPixel < size; yPixel++) {
-        for (int xPixel = 0; xPixel < size; xPixel++) {
-            qrImage.setPixelColor(xPixel, yPixel, qr.getModule(xPixel, yPixel) ? Qt::black : Qt::white);
+    for (int r = 0; r < qrSize; ++r) {
+        for (int c = 0; c < qrSize; ++c) {
+            if (qr.getModule(c, r)) {
+                painter.fillRect(qrX + c * scale, qrY + r * scale, scale, scale, Qt::black);
+            }
         }
     }
 
-    painter.drawImage(QRectF(qrX, qrImageY, qrSize, qrSize), qrImage);
+    y = qrY + qrSize * scale + sectionSpacing + 55;
+
+    // Footer message
+    painter.setFont(italicFont);
+    painter.drawText(x, y, "THANK YOU FOR CHOOSING US : HAMRO BUS SEWA");
 
     painter.end();
-
-    qDebug() << "PDF with QR saved at:" << fileName;
+    qDebug() << "PDF file saved at:" << filePath;
 }
+
 
 
 QString ReservationHandler::generateQRCode(const QString &data)
@@ -292,7 +267,6 @@ bool ReservationHandler::connectDatabase()
         return false;
     }
 
-    // **Ensure DB is re-opened and valid**
     if (!db.isOpen()) {
         if (!db.open()) {
             qWarning() << "DB failed to reopen after table creation:" << db.lastError().text();
